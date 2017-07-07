@@ -1,0 +1,18 @@
+//
+//  PrefixHeader.pch
+//  HVScrollView(仿美团)
+//
+//  Created by Libo on 17/7/7.
+//  Copyright © 2017年 iDress. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+#define kScreenW [UIScreen mainScreen].bounds.size.width
+#define kScreenH [UIScreen mainScreen].bounds.size.height
+
+
+#define kScrollViewBeginTopInset 240
+
+#endif /* PrefixHeader_pch */
