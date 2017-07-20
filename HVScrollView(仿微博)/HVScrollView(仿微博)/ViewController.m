@@ -123,13 +123,13 @@
     for (int i = 0; i < self.childViewControllers.count; i++) {
         
         baseVc = self.childViewControllers[i];
-        if (baseVc.scrollView == scrollingScrollView || (baseVc.scrollView.contentOffset.y >= 200 && self.pageMenu.frame.origin.y <= 0)) {
+        if (baseVc.scrollView == scrollingScrollView || (baseVc.scrollView.contentOffset.y >= HeaderViewH && self.pageMenu.frame.origin.y <= 0)) {
             continue;
         }
         CGPoint contentOffSet = baseVc.scrollView.contentOffset;
         contentOffSet.y = scrollingScrollView.contentOffset.y;
-        if (contentOffSet.y >= 200) {
-            contentOffSet.y = 200;
+        if (contentOffSet.y >= HeaderViewH) {
+            contentOffSet.y = HeaderViewH;
         }
         baseVc.scrollView.contentOffset = contentOffSet;
     }
