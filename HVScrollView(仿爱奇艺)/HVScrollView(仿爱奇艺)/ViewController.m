@@ -95,6 +95,7 @@
     
 }
 
+
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     if (scrollView == self.scrollView) {
         NSInteger index = scrollView.contentOffset.x / scrollView.frame.size.width;

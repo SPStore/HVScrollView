@@ -24,6 +24,7 @@
     [self.view addSubview:self.tableView];
     self.scrollView = self.tableView;
     
+    
     self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         // 下拉刷新
         [self downPullUpdateData];
@@ -34,11 +35,17 @@
     }];
 }
 
+
 // 下拉刷新
 - (void)downPullUpdateData {
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"isRefreshing" object:@(RefreshingStateRefreshing)];
+    
     // 模拟网络请求，1秒后结束刷新
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.rowCount = 20;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"isRefreshing" object:@(RefreshingStateEndRefresh)];
+
         [self.tableView.mj_header endRefreshing];
     });
 }
@@ -47,9 +54,13 @@
 - (void)upPullLoadMoreData {
     self.rowCount = 30;
     [self.tableView reloadData];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"isRefreshing" object:@(RefreshingStateRefreshing)];
+
     // 模拟网络请求，1秒后结束刷新
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.rowCount = 20;
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"isRefreshing" object:@(RefreshingStateEndRefresh)];
+
         [self.tableView.mj_footer endRefreshing];
     });
 }
@@ -58,10 +69,6 @@
     CGFloat offsetDifference = scrollView.contentOffset.y - self.lastContentOffset.y;
     // 滚动时发出通知
     [[NSNotificationCenter defaultCenter] postNotificationName:@"SubScrollViewDidScroll" object:nil userInfo:@{@"scrollingScrollView":scrollView,@"offsetDifference":@(offsetDifference)}];
-    self.lastContentOffset = scrollView.contentOffset;
-}
-
-- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     self.lastContentOffset = scrollView.contentOffset;
 }
 

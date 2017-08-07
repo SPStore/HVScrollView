@@ -62,11 +62,37 @@
     // 先将第一个子控制的view添加到scrollView上去
     [self.scrollView addSubview:self.childViewControllers[0].view];
     
-    
     // 监听子控制器发出的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subScrollViewDidScroll:) name:@"SubScrollViewDidScroll" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshing:) name:@"isRefreshing" object:nil];
     
 }
+
+#pragma mark - 刷新通知
+- (void)refreshing:(NSNotification *)noti {
+    RefreshingState state = [noti.object integerValue];
+    if (state == RefreshingStateRefreshing) {
+        self.scrollView.userInteractionEnabled = NO;
+    } else {
+        self.scrollView.userInteractionEnabled = YES;
+    }
+}
+
+// self.scrollView的代理方法
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+
+    BaseViewController *baseVc = self.childViewControllers[_selectedIndex];
+    if (scrollView == self.scrollView) {
+        // 如果scrollView的内容很少，在屏幕范围内，则自动回落
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (baseVc.scrollView.contentSize.height < kScreenH && [baseVc isViewLoaded]) {
+                [baseVc.scrollView setContentOffset:CGPointMake(0, -kScrollViewBeginTopInset) animated:YES];
+            }
+        });
+    }
+}
+
 
 // 子控制器上的scrollView已经滑动的代理方法所发出的通知方法(核心)
 - (void)subScrollViewDidScroll:(NSNotification *)noti {
