@@ -17,7 +17,7 @@
 
 #define kHeaderViewH 200
 #define kPageMenuH 40
-#define kNaviH 0
+#define kNaviH 64
 
 @interface ViewController () <SPPageMenuDelegate,UIScrollViewDelegate>
 
@@ -38,7 +38,15 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //self.navigationController.navigationBar.hidden = YES;
     self.navigationController.navigationBar.translucent = NO;
+    //self.automaticallyAdjustsScrollViewInsets = NO;
+    
+    UIView *redView = [UIView new];
+    redView.frame = CGRectMake(0, 0, kScreenW, 64);
+    redView.backgroundColor = [UIColor redColor];
+     
+    [self.view addSubview:redView];
     
     self.lastPageMenuY = kHeaderViewH;
     
@@ -141,8 +149,8 @@
                     
                 }
             } else { // 往下移
-                if ((scrollingScrollView.contentOffset.y+self.pageMenu.frame.origin.y)<kHeaderViewH) {
-                    pageMenuFrame.origin.y = -scrollingScrollView.contentOffset.y+kHeaderViewH;
+                if ((scrollingScrollView.contentOffset.y+self.pageMenu.frame.origin.y)-kNaviH<kHeaderViewH) {
+                    pageMenuFrame.origin.y = -scrollingScrollView.contentOffset.y+kHeaderViewH+kNaviH;
                 }
             }
         }
@@ -213,7 +221,7 @@
     targetViewController.view.frame = CGRectMake(kScreenW*toIndex, 0, kScreenW, kScreenH);
     UIScrollView *s = targetViewController.scrollView;
     CGPoint contentOffset = s.contentOffset;
-    contentOffset.y = -self.pageMenu.frame.origin.y+kHeaderViewH;
+    contentOffset.y = -self.pageMenu.frame.origin.y+kHeaderViewH+kNaviH;
     
     if (contentOffset.y >= kHeaderViewH) {
         contentOffset.y = kHeaderViewH;
@@ -230,7 +238,7 @@
     
     if (!_scrollView) {
         _scrollView = [[UIScrollView alloc] init];
-        _scrollView.frame = CGRectMake(0, 0, kScreenW, kScreenH);
+        _scrollView.frame = CGRectMake(0, kNaviH, kScreenW, kScreenH);
         _scrollView.delegate = self;
         _scrollView.pagingEnabled = YES;
         _scrollView.showsVerticalScrollIndicator = NO;
@@ -254,7 +262,7 @@
 - (SPPageMenu *)pageMenu {
     
     if (!_pageMenu) {
-        _pageMenu = [SPPageMenu pageMenuWithFrame:CGRectMake(0, CGRectGetMaxY(self.headerView.frame), kScreenW, kPageMenuH) array:@[@"第一个",@"第二个",@"第三个",@"第四个"]];
+        _pageMenu = [SPPageMenu pageMenuWithFrame:CGRectMake(0, CGRectGetMaxY(self.headerView.frame)+kNaviH, kScreenW, kPageMenuH) array:@[@"第一个",@"第二个",@"第三个",@"第四个"]];
         _pageMenu.backgroundColor = [UIColor whiteColor];
         _pageMenu.delegate = self;
         _pageMenu.buttonFont = [UIFont systemFontOfSize:16];

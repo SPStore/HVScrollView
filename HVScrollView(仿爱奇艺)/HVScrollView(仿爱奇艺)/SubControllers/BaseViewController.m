@@ -20,6 +20,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    
     self.rowCount = 20;
 
     self.tableView.tableHeaderView = self.placeholderHeaderView;

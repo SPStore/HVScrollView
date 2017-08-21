@@ -27,6 +27,7 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
+    NSLog(@"--- %@",self);
     self.button.center = CGPointMake(self.center.x, self.center.y);
 }
 
