@@ -434,7 +434,7 @@
 				TargetAttributes = {
 					0944F7B71F0F2925003856A5 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = SXULSRC6Y5;
+						DevelopmentTeam = MP8K63J94Y;
 						ProvisioningStyle = Automatic;
 					};
 					0944F7D01F0F2925003856A5 = {
@@ -681,7 +681,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = SXULSRC6Y5;
+				DEVELOPMENT_TEAM = MP8K63J94Y;
 				GCC_PREFIX_HEADER = "HVScrollView(仿美团)/PrefixHeader.pch";
 				INFOPLIST_FILE = "HVScrollView(仿美团)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -694,7 +694,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = SXULSRC6Y5;
+				DEVELOPMENT_TEAM = MP8K63J94Y;
 				GCC_PREFIX_HEADER = "HVScrollView(仿美团)/PrefixHeader.pch";
 				INFOPLIST_FILE = "HVScrollView(仿美团)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

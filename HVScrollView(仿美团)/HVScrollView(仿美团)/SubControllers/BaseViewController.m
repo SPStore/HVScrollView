@@ -19,7 +19,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.rowCount = 20;
+    self.rowCount = 2;
     
     [self.view addSubview:self.tableView];
     self.scrollView = self.tableView;
@@ -43,25 +43,26 @@
     
     // 模拟网络请求，1秒后结束刷新
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        self.rowCount = 20;
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"isRefreshing" object:@(RefreshingStateEndRefresh)];
-
+        self.rowCount = 2;
+        
         [self.tableView.mj_header endRefreshing];
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"isRefreshing" object:@(RefreshingStateEndRefresh)];
     });
 }
 
 // 上拉加载
 - (void)upPullLoadMoreData {
-    self.rowCount = 30;
+    self.rowCount = 3;
     [self.tableView reloadData];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"isRefreshing" object:@(RefreshingStateRefreshing)];
 
     // 模拟网络请求，1秒后结束刷新
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        self.rowCount = 20;
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"isRefreshing" object:@(RefreshingStateEndRefresh)];
-
+        self.rowCount = 2;
         [self.tableView.mj_footer endRefreshing];
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"isRefreshing" object:@(RefreshingStateEndRefresh)];
     });
 }
 

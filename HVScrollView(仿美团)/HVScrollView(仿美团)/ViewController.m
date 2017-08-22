@@ -32,6 +32,7 @@
 @property (nonatomic, assign) CGFloat lastPageMenuY;
 
 @property (nonatomic, assign) CGPoint lastPoint;
+@property (nonatomic, assign) RefreshingState state;
 @end
 
 @implementation ViewController
@@ -85,16 +86,16 @@
     BaseViewController *baseVc = self.childViewControllers[_selectedIndex];
     if (scrollView == self.scrollView) {
         // 如果scrollView的内容很少，在屏幕范围内，则自动回落
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (self.state != RefreshingStateRefreshing) {
             if (baseVc.scrollView.contentSize.height < kScreenH && [baseVc isViewLoaded]) {
                 [baseVc.scrollView setContentOffset:CGPointMake(0, -kScrollViewBeginTopInset) animated:YES];
             }
-        });
+        }
     }
 }
 
 
-// 子控制器上的scrollView已经滑动的代理方法所发出的通知方法(核心)
+// 子控制器上的scrollView已经滑动的代理方法所发出的通知(核心)
 - (void)subScrollViewDidScroll:(NSNotification *)noti {
     
     // 取出当前正在滑动的tableView
