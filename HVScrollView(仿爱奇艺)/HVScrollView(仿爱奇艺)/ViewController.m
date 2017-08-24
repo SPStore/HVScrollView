@@ -17,7 +17,7 @@
 
 #define kHeaderViewH 200
 #define kPageMenuH 40
-#define kNaviH 64
+#define kNaviH 0
 
 @interface ViewController () <SPPageMenuDelegate,UIScrollViewDelegate>
 
@@ -41,12 +41,6 @@
     //self.navigationController.navigationBar.hidden = YES;
     self.navigationController.navigationBar.translucent = NO;
     //self.automaticallyAdjustsScrollViewInsets = NO;
-    
-    UIView *redView = [UIView new];
-    redView.frame = CGRectMake(0, 0, kScreenW, 64);
-    redView.backgroundColor = [UIColor redColor];
-     
-    [self.view addSubview:redView];
     
     self.lastPageMenuY = kHeaderViewH;
     
