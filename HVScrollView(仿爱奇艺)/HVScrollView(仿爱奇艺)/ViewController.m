@@ -114,7 +114,7 @@
     }
 }
 
-// 子控制器上的scrollView已经滑动的代理方法所发出的通知方法
+// 子控制器上的scrollView已经滑动的代理方法所发出的通知
 - (void)subScrollViewDidScroll:(NSNotification *)noti {
 
     // 取出当前正在滑动的tableView

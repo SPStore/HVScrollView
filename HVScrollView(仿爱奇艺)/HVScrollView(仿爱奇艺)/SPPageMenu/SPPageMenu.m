@@ -595,6 +595,26 @@ static NSInteger tagIndex = 2016;
     self.tracker.frame = newFrame;
 }
 
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    if (![self pointInside:point withEvent:event]) {
+        return nil;
+    }
+    if (self.userInteractionEnabled == NO || self.hidden == YES || self.alpha <= 0.01) {
+        return nil;
+    }
+    
+    int count = (int)self.subviews.count;
+    for (int i = count-1; i >= 0; i--) {
+        UIView *childView = self.subviews[i];
+        CGPoint childPoint = [childView convertPoint:point fromView:self];
+        //CGPoint childPoint = [self convertPoint:point toView:childView];
+        UIView *view = [childView hitTest:childPoint withEvent:event];
+        if ([view isKindOfClass:[UIButton class]]) {
+            return view;
+        }
+    }
+    return nil;
+}
 
 @end
 
