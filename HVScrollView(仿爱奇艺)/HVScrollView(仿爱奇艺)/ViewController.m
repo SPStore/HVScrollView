@@ -77,11 +77,11 @@
         if ([baseVc isViewLoaded]) {
             [self.scrollView bringSubviewToFront:baseVc.view];
         }
-        // 横向切换tableView时头部不要跟随tableView偏移
+        // 横向切换tableView时头部不要跟随tableView偏移,tableView往东，headerView就往西
         CGRect headerFrame = self.headerView.frame;
         headerFrame.origin.x = scrollView.contentOffset.x-kScreenW*self.pageMenu.selectedItemIndex;
         self.headerView.frame = headerFrame;
-        
+
         [self configerHeaderY];
         
         // 如果scrollView的内容很少，在屏幕范围内，则自动回落
@@ -96,7 +96,6 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     if (scrollView == self.scrollView) {
-
         [self configerHeaderY];
     }
 }

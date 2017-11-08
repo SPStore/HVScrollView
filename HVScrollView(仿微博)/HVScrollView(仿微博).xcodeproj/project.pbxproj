@@ -22,6 +22,7 @@
 		0944F8A51F0F2C15003856A5 /* ThirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0944F89D1F0F2C15003856A5 /* ThirdViewController.m */; };
 		0944F8A61F0F2C15003856A5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0944F89F1F0F2C15003856A5 /* ViewController.m */; };
 		0944F8AC1F0F2CE7003856A5 /* SPPageMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 0944F8AB1F0F2CE7003856A5 /* SPPageMenu.m */; };
+		0949907A1FB295D4005B276F /* MyTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 094990791FB295D4005B276F /* MyTableView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +74,8 @@
 		0944F8A81F0F2C94003856A5 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		0944F8AA1F0F2CE7003856A5 /* SPPageMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPPageMenu.h; sourceTree = "<group>"; };
 		0944F8AB1F0F2CE7003856A5 /* SPPageMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPPageMenu.m; sourceTree = "<group>"; };
+		094990781FB295D4005B276F /* MyTableView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyTableView.h; sourceTree = "<group>"; };
+		094990791FB295D4005B276F /* MyTableView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyTableView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +131,8 @@
 				0944F8631F0F2BD7003856A5 /* AppDelegate.m */,
 				0944F89E1F0F2C15003856A5 /* ViewController.h */,
 				0944F89F1F0F2C15003856A5 /* ViewController.m */,
+				094990781FB295D4005B276F /* MyTableView.h */,
+				094990791FB295D4005B276F /* MyTableView.m */,
 				0944F8921F0F2C15003856A5 /* BaseViewController.h */,
 				0944F8931F0F2C15003856A5 /* BaseViewController.m */,
 				0944F8941F0F2C15003856A5 /* FirstViewController.h */,
@@ -324,6 +329,7 @@
 				0944F8A61F0F2C15003856A5 /* ViewController.m in Sources */,
 				0944F8641F0F2BD7003856A5 /* AppDelegate.m in Sources */,
 				0944F8A01F0F2C15003856A5 /* BaseViewController.m in Sources */,
+				0949907A1FB295D4005B276F /* MyTableView.m in Sources */,
 				0944F8A51F0F2C15003856A5 /* ThirdViewController.m in Sources */,
 				0944F8AC1F0F2CE7003856A5 /* SPPageMenu.m in Sources */,
 				0944F8A21F0F2C15003856A5 /* FourViewController.m in Sources */,
@@ -568,6 +574,7 @@
 				0944F88B1F0F2BD7003856A5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0944F88C1F0F2BD7003856A5 /* Build configuration list for PBXNativeTarget "HVScrollView(仿微博)Tests" */ = {
 			isa = XCConfigurationList;
@@ -576,6 +583,7 @@
 				0944F88E1F0F2BD7003856A5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0944F88F1F0F2BD7003856A5 /* Build configuration list for PBXNativeTarget "HVScrollView(仿微博)UITests" */ = {
 			isa = XCConfigurationList;
@@ -584,6 +592,7 @@
 				0944F8911F0F2BD7003856A5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

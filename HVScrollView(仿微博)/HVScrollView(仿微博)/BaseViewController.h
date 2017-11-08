@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface BaseViewController : UIViewController
+#define PageMenuH 40
+#define NaviH 64
+#define HeaderViewH 200
 
-@property (nonatomic, strong) UIScrollView *scrollView;
-@property (nonatomic, assign) CGPoint lastContentOffset;
+@interface BaseViewController : UIViewController
 
 @end

@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MyHeaderView : UIScrollView
+@interface MyHeaderView : UIView
 
 @end

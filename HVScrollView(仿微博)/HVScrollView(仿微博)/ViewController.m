@@ -13,11 +13,10 @@
 #import "FourViewController.h"
 #import "SPPageMenu.h"
 #import "MyHeaderView.h"
+#import "MyTableView.h"
 
-#define PageMenuH 40
-#define HeaderViewH 200
-
-@interface ViewController () <SPPageMenuDelegate,UIScrollViewDelegate>
+@interface ViewController () <SPPageMenuDelegate,UITableViewDataSource,UITableViewDelegate>
+@property (nonatomic, strong) MyTableView *tableView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) MyHeaderView *headerView;
 
@@ -27,6 +26,10 @@
 @property (nonatomic, assign) CGPoint lastPoint;
 
 @property (nonatomic, assign) BOOL headerScrollViewScrolling;
+@property (nonatomic, strong) UIScrollView *childVCScrollView;
+
+@property (nonatomic, assign) BOOL other;
+
 @end
 
 @implementation ViewController
@@ -35,8 +38,8 @@
     [super viewDidLoad];
     
     self.navigationController.navigationBar.translucent = NO;
-    // 添加一个全屏的scrollView
-    [self.view addSubview:self.scrollView];
+    
+    [self.view addSubview:self.tableView];
     
     // 添加4个子控制器
     [self addChildViewController:[[FirstViewController alloc] init]];
@@ -47,48 +50,58 @@
     [self.scrollView addSubview:self.childViewControllers[0].view];
     
     // 添加头部视图
-    [self.view addSubview:self.headerView];
-    // 添加悬浮菜单
-    [self.view addSubview:self.pageMenu];
+    self.tableView.tableHeaderView = self.headerView;
     
     // 监听子控制器发出的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subTableViewDidScroll:) name:@"SubTableViewDidScroll" object:nil];
     
 }
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 1;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
+    }
+    // 添加悬浮菜单
+    [cell.contentView addSubview:self.pageMenu];
+    [cell.contentView addSubview:self.scrollView];
+    return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return kScreenH;
+}
+
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    if (scrollView == self.headerView) {
-        self.headerScrollViewScrolling = YES;
-    } }
+    
+}
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if (scrollView == self.headerView) {
-        BaseViewController *currentVc = self.childViewControllers[_selectedIndex];
-        if ([currentVc isViewLoaded]) {
-            CGPoint offset = currentVc.scrollView.contentOffset;
-            offset.y = scrollView.contentOffset.y;
-            currentVc.scrollView.contentOffset = offset;
-            
-            CGRect pageMenuFrame = self.pageMenu.frame;
-            pageMenuFrame.origin.y = -scrollView.contentOffset.y+HeaderViewH;
-            if (pageMenuFrame.origin.y <= 0) {
-                pageMenuFrame.origin.y = 0;
-            }
-            self.pageMenu.frame = pageMenuFrame;
+    if (self.tableView == scrollView) {
+        if (self.childVCScrollView && _childVCScrollView.contentOffset.y > 0) {
+            self.tableView.contentOffset = CGPointMake(0, HeaderViewH);
         }
+        CGFloat offSetY = scrollView.contentOffset.y;
+
+        if (offSetY < HeaderViewH) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"headerViewToTop" object:nil];
+        }
+    } else if (scrollView == self.scrollView) {
+        
     }
+    
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    if (scrollView == self.headerView) {
-        self.headerScrollViewScrolling = NO;
-    }
+ 
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    if (scrollView == self.headerView) {
-        self.headerScrollViewScrolling = NO;
-    } else if (scrollView == self.scrollView) {
+    if (scrollView == self.scrollView) {
         NSInteger index = scrollView.contentOffset.x / scrollView.frame.size.width;
         // 手动滑scrollView,pageMenu会根据传进去的index选中index对应的button
         [self.pageMenu selectButtonAtIndex:index];
@@ -96,52 +109,15 @@
 }
 
 - (void)subTableViewDidScroll:(NSNotification *)noti {
-    // 取出当前正在滑动的tableView
-    UIScrollView *scrollingScrollView = noti.object;
-    if ([self isVisibleScrollView:scrollingScrollView] && !self.headerScrollViewScrolling) {
-        // 让头部视图跟随scrollView滚动
-        CGPoint headerViewOffset = self.headerView.contentOffset;
-        headerViewOffset.y = scrollingScrollView.contentOffset.y;
-        self.headerView.contentOffset = headerViewOffset;
-        // 让悬浮菜单跟随scrollView滑动
-        CGRect pageMenuFrame = self.pageMenu.frame;
-        pageMenuFrame.origin.y = -(scrollingScrollView.contentOffset.y-HeaderViewH);
+    UIScrollView *scrollView = noti.object;
+    self.childVCScrollView = scrollView;
+    if (self.tableView.contentOffset.y < HeaderViewH) {
+        scrollView.contentOffset = CGPointZero;
+        scrollView.showsVerticalScrollIndicator = NO;
         
-        if (pageMenuFrame.origin.y <= 0) {
-            pageMenuFrame.origin.y = 0;
-        }
-        self.pageMenu.frame = pageMenuFrame;
-     
-        // 让其余控制器的scrollView跟随当前正在滑动的scrollView滑动
-        [self followScrollingScrollView:scrollingScrollView];
-    }
-    
-}
-
-- (void)followScrollingScrollView:(UIScrollView *)scrollingScrollView {
-    BaseViewController *baseVc = nil;
-    for (int i = 0; i < self.childViewControllers.count; i++) {
-        
-        baseVc = self.childViewControllers[i];
-        if (baseVc.scrollView == scrollingScrollView || (baseVc.scrollView.contentOffset.y >= HeaderViewH && self.pageMenu.frame.origin.y <= 0)) {
-            continue;
-        }
-        CGPoint contentOffSet = baseVc.scrollView.contentOffset;
-        contentOffSet.y = scrollingScrollView.contentOffset.y;
-        if (contentOffSet.y >= HeaderViewH) {
-            contentOffSet.y = HeaderViewH;
-        }
-        baseVc.scrollView.contentOffset = contentOffSet;
-    }
-}
-
-- (BOOL)isVisibleScrollView:(UIScrollView *)scrollView {
-    
-    CGRect rectInScrollView = [scrollView convertRect:scrollView.bounds toView:self.scrollView];
-    if (fabs(rectInScrollView.origin.x/kScreenW) == _selectedIndex) {
-        return YES;
     } else {
-        return NO;
+//        self.tableView.contentOffset = CGPointMake(0, HeaderViewH);
+        scrollView.showsVerticalScrollIndicator = YES;
     }
 }
 
@@ -167,7 +143,6 @@
     targetViewController.view.frame = CGRectMake(kScreenW*toIndex, 0, kScreenW, kScreenH);
     UIScrollView *s = targetViewController.view.subviews[0];
     CGPoint contentOffset = s.contentOffset;
-    contentOffset.y = self.headerView.contentOffset.y;
     if (contentOffset.y >= HeaderViewH) {
         contentOffset.y = HeaderViewH;
     }
@@ -179,7 +154,7 @@
     
     if (!_scrollView) {
         _scrollView = [[UIScrollView alloc] init];
-        _scrollView.frame = CGRectMake(0, 0, kScreenW, kScreenH-64);
+        _scrollView.frame = CGRectMake(0, PageMenuH, kScreenW, kScreenH);
         _scrollView.delegate = self;
         _scrollView.pagingEnabled = YES;
         _scrollView.showsVerticalScrollIndicator = NO;
@@ -190,6 +165,18 @@
     return _scrollView;
 }
 
+- (MyTableView *)tableView {
+    
+    if (!_tableView) {
+        _tableView = [[MyTableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+        _tableView.dataSource = self;
+        _tableView.delegate = self;
+        _tableView.showsVerticalScrollIndicator = NO;
+        //_tableView.sectionHeaderHeight = PageMenuH;
+    }
+    return _tableView;
+}
+
 
 - (MyHeaderView *)headerView {
     
@@ -197,9 +184,6 @@
         _headerView = [[MyHeaderView alloc] init];
         _headerView.frame = CGRectMake(0, 0, kScreenW, HeaderViewH);
         _headerView.backgroundColor = [UIColor clearColor];
-        _headerView.alwaysBounceVertical = YES;
-        _headerView.delegate = self;
-        _headerView.contentSize = CGSizeMake(0, kScreenH);
         _headerView.layer.masksToBounds = NO;
         
         UIView *contentView = [[UIView alloc] initWithFrame:_headerView.bounds];
@@ -223,7 +207,7 @@
 - (SPPageMenu *)pageMenu {
     
     if (!_pageMenu) {
-        _pageMenu = [SPPageMenu pageMenuWithFrame:CGRectMake(0, CGRectGetMaxY(self.headerView.frame), kScreenW, PageMenuH) array:@[@"第一个",@"第二个",@"第三个",@"第四个"]];
+        _pageMenu = [SPPageMenu pageMenuWithFrame:CGRectMake(0, 0, kScreenW, PageMenuH) array:@[@"第一个",@"第二个",@"第三个",@"第四个"]];
         _pageMenu.backgroundColor = [UIColor whiteColor];
         _pageMenu.delegate = self;
         _pageMenu.buttonFont = [UIFont systemFontOfSize:16];
