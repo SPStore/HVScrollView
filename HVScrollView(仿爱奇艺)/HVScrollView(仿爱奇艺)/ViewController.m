@@ -96,12 +96,8 @@
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     if (scrollView == self.scrollView) {
-        NSInteger index = scrollView.contentOffset.x / scrollView.frame.size.width;
-        // 手动滑scrollView,pageMenu会根据传进去的index选中index对应的button
-        self.pageMenu.selectedItemIndex = index;
-        
-        [self configerHeaderY];
 
+        [self configerHeaderY];
     }
 }
 
@@ -255,6 +251,7 @@
         _pageMenu.unSelectedItemTitleColor = [UIColor colorWithWhite:0 alpha:0.6];
         _pageMenu.tracker.backgroundColor = [UIColor orangeColor];
         _pageMenu.permutationWay = SPPageMenuPermutationWayNotScrollEqualWidths;
+        _pageMenu.bridgeScrollView = self.scrollView;
         
     }
     return _pageMenu;
