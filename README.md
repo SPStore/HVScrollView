@@ -38,3 +38,6 @@
 ![image](https://github.com/SPStore/HVScrollView/blob/master/爱奇艺.gif)
 
 *爱奇艺难就难在头部的处理上，如果像美团一样，将头视图添加在父控制器的view上，当先添横向scrollView，再添加头视图时，那么头视图会遮挡横向滑动的scrollView，从而滑动头部的时候就不能上下滑动，只能通过添加手势，但是手势很难达到scrollView的弹性效果，滑动起来很僵硬；当先添加头视图，再添加横向scrollView时，横向scrollView又会把头视图遮挡，从而导致头视图不具备任何事件.*
+
+## 美团和爱奇艺的若干个子tableView联动原理
+当滑动其中一个子tableView时（我叫它主动tableView），发出一个通知，该通知由父控制器监听，在父控制器中遍历每个子tableVeiw（除去主动tableView之外的其余tableView叫被动tableView），让被动tableView跟随主动tableView滑动，当滑动到顶部，让悬浮菜单悬停。
