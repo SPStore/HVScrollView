@@ -10,30 +10,30 @@
 }
 ```
 * 重要功能
-1. 垂直方向上能够整体滑动，头部依然能够整体上下滑，滑动头部也就是滑动大tableView
-2. 头部能够触发事件
-3. 支持整体和局部刷新(局部刷新是指刷新的文字显示在悬浮菜单之下，而非导航栏之下)
-4. 横向切换tableView，当切换其余tableView再次回到原tableView时不记录原先位置，直接从第0行开始(微博难度系数低点就是因为这里)
+    1. 垂直方向上能够整体滑动，头部依然能够整体上下滑，滑动头部也就是滑动大tableView
+    2. 头部能够触发事件
+    3. 支持整体和局部刷新(局部刷新是指刷新的文字显示在悬浮菜单之下，而非导航栏之下)
+    4. 横向切换tableView，当切换其余tableView再次回到原tableView时不记录原先位置，直接从第0行开始(微博难度系数低点就是因为这里)
 * 效果图   
 ![image](https://github.com/SPStore/HVScrollView/blob/master/微博.gif)
 ## 美团    难度系数：★★★★★★★
 * 层级结构描述    
 首先是一个父控制器，父控制器添加一个横向滑动的全屏scrollView，再添加头视图和悬浮菜单，也就是，这个横向滑动的scrollView，头视图和悬浮菜单都添加在父控制器的view上.横向滑动的scrollView就是用来添加子控制器,每个子控制器有一个tableView。
 * 重要功能
-1. 垂直方向上局部滑动，头部具有平移手势，可以通过平移整体上下滑动，但是不具备scrollView的弹性效果
-2. 头部能够触发事件
-3. 仅支持局部刷新
-4. 横向切换tableView，当切换其余tableView再次回到原tableView时要记录原先位置
+    1. 垂直方向上局部滑动，头部具有平移手势，可以通过平移整体上下滑动，但是不具备scrollView的弹性效果
+    2. 头部能够触发事件
+    3. 仅支持局部刷新
+    4. 横向切换tableView，当切换其余tableView再次回到原tableView时要记录原先位置
 * 效果图   
 ![image](https://github.com/SPStore/HVScrollView/blob/master/美团.gif)
 ## 爱奇艺    难度系数：★★★★★★★★★★
 * 层级结构描述        
 首先是一个父控制器，父控制器上添加一个全屏的横向滑动的scrollView，这个横向滑动的scrollView用来添加若干个子控制器，每个子控制器上有个tabelView。头视图首先添加在第一个子控制器的tableView的tabelHeaderView上，当横向切换scrollView时，头视图的x值需要改变，改变的方向与scrollView横向滑动的方向相反，否则头视图会跟着scrollView一起横向滑动，当滑动结束时，切换头视图的父视图为第二个控制器的tableView的tableHeaderView。悬浮菜单添加在父控制器上。
 * 重要功能
-1. 垂直方向上能够整体滑动，头部可以整体上下滑动，具备scrollView的弹性效果，滑动头部实际上是滑动子tableVeiw
-2. 头部能够触发事件
-3. 仅支持整体刷新，刷新时大scrollView不能横向切换
-4. 横向切换tableView，当切换其余tableView再次回到原tableView时要记录原先位置
+    1. 垂直方向上能够整体滑动，头部可以整体上下滑动，具备scrollView的弹性效果，滑动头部实际上是滑动子tableVeiw
+    2. 头部能够触发事件
+    3. 仅支持整体刷新，刷新时大scrollView不能横向切换
+    4. 横向切换tableView，当切换其余tableView再次回到原tableView时要记录原先位置
 * 效果图   
 ![image](https://github.com/SPStore/HVScrollView/blob/master/爱奇艺.gif)
 
@@ -41,3 +41,5 @@
 
 ## 美团和爱奇艺的若干个子tableView联动原理
 当滑动其中一个子tableView时（我叫它主动tableView），发出一个通知，该通知由父控制器监听，在父控制器中遍历每个子tableVeiw（除去主动tableView之外的其余tableView叫被动tableView），让被动tableView跟随主动tableView滑动，当滑动到顶部，让悬浮菜单悬停。
+
+
