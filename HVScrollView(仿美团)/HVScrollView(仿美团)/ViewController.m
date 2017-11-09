@@ -233,7 +233,12 @@
 }
 
 - (void)btnAction:(UIButton *)sender {
-    NSLog(@"---哇，棒极了，我接收到了您的点击事件");
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"我很愉快地\n接受到了你的点击事件" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *action = [UIAlertAction actionWithTitle:@"退下吧" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    [alertController addAction:action];
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 - (UIScrollView *)scrollView {

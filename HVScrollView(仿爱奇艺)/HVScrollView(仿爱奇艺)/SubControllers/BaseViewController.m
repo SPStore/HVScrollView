@@ -122,7 +122,7 @@ NSNotificationName const ChildScrollViewRefreshStateNSNotification = @"ChildScro
     
     if (!_placeholderHeaderView) {
         _placeholderHeaderView = [[HeaderContentView alloc] init];
-        _placeholderHeaderView.frame = CGRectMake(0, 0, kScreenW, 240);
+        _placeholderHeaderView.frame = CGRectMake(0, 0, kScreenW, kHeaderViewH+kPageMenuH);
     }
     return _placeholderHeaderView;
 }
