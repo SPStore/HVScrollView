@@ -1,7 +1,7 @@
 这种界面在不少app上都有出现，比如微博、美团、饿了么、爱奇艺等，实现起来还是比较棘手的，实现的过程中没有高深莫测的代码，难就难在思路，层级结构上
 这种界面有3样控件是最为显眼的，头视图，悬浮菜单，若干个子tableView
-## 微博    难度系数: ★★★★
-* 层级结构描述
+## 微博    难度系数： ★★★★
+* 层级结构描述    
 首先是一个父控制器，父控制上添加一个大tableView，头视图就作为tableView的tableHeaderView，这个大tableView只有一个cell，这个cell上添加一个横向滑动的scrollView，这个scrollView就用来添加若干个子控制器，每个子控制器都有一个tableView,称为子tableView。其中，父控制器的大tableView必须实现下面这个手势代理方法:
 ```
 // 这个方法是支持多手势，当滑动子控制器中的scrollView时，MyTableView也能接收滑动事件
@@ -14,27 +14,27 @@
 2. 头部能够触发事件
 3. 支持整体和局部刷新(局部刷新是指刷新的文字显示在悬浮菜单之下，而非导航栏之下)
 4. 横向切换tableView，当切换其余tableView再次回到原tableView时不记录原先位置，直接从第0行开始(微博难度系数低点就是因为这里)
-* 效果图
+* 效果图   
 ![image](https://github.com/SPStore/HVScrollView/blob/master/微博.gif)
-## 美团    难度系数:★★★★★★★
-* 层级结构描述
+## 美团    难度系数：★★★★★★★
+* 层级结构描述    
 首先是一个父控制器，父控制器添加一个横向滑动的全屏scrollView，再添加头视图和悬浮菜单，也就是，这个横向滑动的scrollView，头视图和悬浮菜单都添加在父控制器的view上.横向滑动的scrollView就是用来添加子控制器,每个子控制器有一个tableView。
 * 重要功能
 1. 垂直方向上能够整体滑动，头部具有平移手势，可以通过平移整体上下滑动，但是不具备scrollView的弹性效果
 2. 头部能够触发事件
 3. 仅支持局部刷新
 4. 横向切换tableView，当切换其余tableView再次回到原tableView时要记录原先位置
-* 效果图
+* 效果图   
 ![image](https://github.com/SPStore/HVScrollView/blob/master/美团.gif)
-## 爱奇艺    难度系数:★★★★★★★★★★
-* 层级结构描述
+## 爱奇艺    难度系数：★★★★★★★★★★
+* 层级结构描述        
 首先是一个父控制器，父控制器上添加一个全屏的横向滑动的scrollView，这个横向滑动的scrollView用来添加若干个子控制器，每个子控制器上有个tabelView。头视图首先添加在第一个子控制器的tableView的tabelHeaderView上，当横向切换scrollView时，头视图的x值需要改变，改变的方向与scrollView横向滑动的方向相反，否则头视图会跟着scrollView一起横向滑动，当滑动结束时，切换头视图的父视图为第二个控制器的tableView的tableHeaderView。悬浮菜单添加在父控制器上。
 * 重要功能
 1. 垂直方向上能够整体滑动，头部可以整体上下滑动，具备scrollView的弹性效果，滑动头部实际上是滑动子tableVeiw
 2. 头部能够触发事件
 3. 仅支持整体刷新，刷新时大scrollView不能横向切换
 4. 横向切换tableView，当切换其余tableView再次回到原tableView时要记录原先位置
-* 效果图
+* 效果图   
 ![image](https://github.com/SPStore/HVScrollView/blob/master/爱奇艺.gif)
 
 *爱奇艺难就难在头部的处理上，如果像美团一样，将头视图添加在父控制器的view上，当先添横向scrollView，再添加头视图时，那么头视图会遮挡横向滑动的scrollView，从而滑动头部的时候就不能上下滑动，只能通过添加手势，但是手势很难达到scrollView的弹性效果，滑动起来很僵硬；当先添加头视图，再添加横向scrollView时，横向scrollView又会把头视图遮挡，从而导致头视图不具备任何事件.
