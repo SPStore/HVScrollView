@@ -6,6 +6,9 @@
 //  Copyright © 2017年 iDress. All rights reserved.
 //
 
+// ----------- 悬浮菜单SPPageMenu的框架github地址:https://github.com/SPStore/SPPageMenu ---------
+// ----------- 本demo地址:https://github.com/SPStore/HVScrollView ----------
+
 #import "ViewController.h"
 #import "FirstViewController.h"
 #import "SecondViewController.h"
@@ -15,14 +18,13 @@
 #import "MyHeaderView.h"
 #import "MyTableView.h"
 
+
 @interface ViewController () <SPPageMenuDelegate,UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic, strong) MyTableView *tableView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) MyHeaderView *headerView;
 
 @property (nonatomic, strong) SPPageMenu *pageMenu;
-
-@property (nonatomic, assign) NSInteger selectedIndex;
 @property (nonatomic, assign) CGPoint lastPoint;
 
 @property (nonatomic, assign) BOOL headerScrollViewScrolling;
@@ -55,6 +57,19 @@
     // 监听子控制器发出的通知
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subTableViewDidScroll:) name:@"SubTableViewDidScroll" object:nil];
     
+    self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        // 下拉刷新
+        [self downPullUpdateData];
+    }];
+    
+}
+
+// 下拉刷新
+- (void)downPullUpdateData {
+    // 模拟网络请求，1秒后结束刷新
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.tableView.mj_header endRefreshing];
+    });
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -101,11 +116,7 @@
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    if (scrollView == self.scrollView) {
-        NSInteger index = scrollView.contentOffset.x / scrollView.frame.size.width;
-        // 手动滑scrollView,pageMenu会根据传进去的index选中index对应的button
-        [self.pageMenu selectButtonAtIndex:index];
-    }
+
 }
 
 - (void)subTableViewDidScroll:(NSNotification *)noti {
@@ -127,8 +138,8 @@
 }
 
 #pragma mark - SPPageMenuDelegate
-- (void)pageMenu:(SPPageMenu *)pageMenu buttonClickedFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex {
-    _selectedIndex = toIndex;
+- (void)pageMenu:(SPPageMenu *)pageMenu itemSelectedFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex {
+    if (!self.childViewControllers.count) { return;}
     // 如果上一次点击的button下标与当前点击的buton下标之差大于等于2,说明跨界面移动了,此时不动画.
     if (labs(toIndex - fromIndex) >= 2) {
         [self.scrollView setContentOffset:CGPointMake(_scrollView.frame.size.width * toIndex, 0) animated:NO];
@@ -207,17 +218,15 @@
 - (SPPageMenu *)pageMenu {
     
     if (!_pageMenu) {
-        _pageMenu = [SPPageMenu pageMenuWithFrame:CGRectMake(0, 0, kScreenW, PageMenuH) array:@[@"第一个",@"第二个",@"第三个",@"第四个"]];
-        _pageMenu.backgroundColor = [UIColor whiteColor];
+        _pageMenu = [SPPageMenu pageMenuWithFrame:CGRectMake(0, 0, kScreenW, PageMenuH) trackerStyle:SPPageMenuTrackerStyleLineAttachment];
+        [_pageMenu setItems:@[@"第一页",@"第二页",@"第三页",@"第四页"] selectedItemIndex:0];
         _pageMenu.delegate = self;
-        _pageMenu.buttonFont = [UIFont systemFontOfSize:16];
-        _pageMenu.selectedTitleColor = [UIColor blackColor];
-        _pageMenu.unSelectedTitleColor = [UIColor colorWithWhite:0 alpha:0.6];
-        _pageMenu.trackerColor = [UIColor orangeColor];
-        _pageMenu.firstButtonX = 15;
-        _pageMenu.allowBeyondScreen = NO;
-        _pageMenu.equalWidths = NO;
-        
+        _pageMenu.itemTitleFont = [UIFont systemFontOfSize:16];
+        _pageMenu.selectedItemTitleColor = [UIColor blackColor];
+        _pageMenu.unSelectedItemTitleColor = [UIColor colorWithWhite:0 alpha:0.6];
+        _pageMenu.tracker.backgroundColor = [UIColor orangeColor];
+        _pageMenu.permutationWay = SPPageMenuPermutationWayNotScrollEqualWidths;
+        _pageMenu.bridgeScrollView = self.scrollView;
     }
     return _pageMenu;
 }

@@ -6,8 +6,14 @@
 //  Copyright © 2017年 iDress. All rights reserved.
 //
 
+// ----------- 悬浮菜单SPPageMenu的框架github地址:https://github.com/SPStore/SPPageMenu ---------
+// ----------- 本demo地址:https://github.com/SPStore/HVScrollView ----------
+
 #import "BaseViewController.h"
 #import "MJRefresh.h"
+
+NSNotificationName const ChildScrollViewDidScrollNSNotification = @"ChildScrollViewDidScrollNSNotification";
+NSNotificationName const ChildScrollViewRefreshStateNSNotification = @"ChildScrollViewRefreshStateNSNotification";
 
 @interface BaseViewController ()
 @property (nonatomic, strong) UITableView *tableView;
@@ -40,24 +46,31 @@
 
 // 下拉刷新
 - (void)downPullUpdateData {
+    [[NSNotificationCenter defaultCenter] postNotificationName:ChildScrollViewRefreshStateNSNotification object:nil userInfo:@{@"isRefreshing":@(YES)}];
     // 模拟网络请求，1秒后结束刷新
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.rowCount = 20;
         [self.tableView.mj_header endRefreshing];
+        [[NSNotificationCenter defaultCenter] postNotificationName:ChildScrollViewRefreshStateNSNotification object:nil userInfo:@{@"isRefreshing":@(NO)}];
+
     });
 }
 
 // 上拉加载
 - (void)upPullLoadMoreData {
+    [[NSNotificationCenter defaultCenter] postNotificationName:ChildScrollViewRefreshStateNSNotification object:nil userInfo:@{@"isRefreshing":@(YES)}];
+
     self.rowCount = 30;
     [self.tableView reloadData];
     // 模拟网络请求，1秒后结束刷新
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self.rowCount = 20;
         [self.tableView.mj_footer endRefreshing];
+        [[NSNotificationCenter defaultCenter] postNotificationName:ChildScrollViewRefreshStateNSNotification object:nil userInfo:@{@"isRefreshing":@(NO)}];
     });
 }
 
+// 设置头视图
 - (void)setHeaderView:(MyHeaderView *)headerView {
     _headerView = headerView;
     CGRect headerFrame = self.headerView.frame;
@@ -71,7 +84,7 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGFloat offsetDifference = scrollView.contentOffset.y - self.lastContentOffset.y;
     // 滚动时发出通知
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"SubScrollViewDidScroll" object:nil userInfo:@{@"scrollingScrollView":scrollView,@"offsetDifference":@(offsetDifference)}];
+    [[NSNotificationCenter defaultCenter] postNotificationName:ChildScrollViewDidScrollNSNotification object:nil userInfo:@{@"scrollingScrollView":scrollView,@"offsetDifference":@(offsetDifference)}];
     self.lastContentOffset = scrollView.contentOffset;
 }
 

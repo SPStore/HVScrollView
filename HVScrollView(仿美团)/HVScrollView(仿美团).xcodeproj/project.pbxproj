@@ -357,12 +357,12 @@
 				0944F82D1F0F2984003856A5 /* BaseViewController.m */,
 				0944F82E1F0F2984003856A5 /* FirstViewController.h */,
 				0944F82F1F0F2984003856A5 /* FirstViewController.m */,
-				0944F8301F0F2984003856A5 /* FourViewController.h */,
-				0944F8311F0F2984003856A5 /* FourViewController.m */,
 				0944F8321F0F2984003856A5 /* SecondViewController.h */,
 				0944F8331F0F2984003856A5 /* SecondViewController.m */,
 				0944F8341F0F2984003856A5 /* ThirdViewController.h */,
 				0944F8351F0F2984003856A5 /* ThirdViewController.m */,
+				0944F8301F0F2984003856A5 /* FourViewController.h */,
+				0944F8311F0F2984003856A5 /* FourViewController.m */,
 			);
 			path = SubControllers;
 			sourceTree = "<group>";

@@ -6,6 +6,9 @@
 //  Copyright © 2017年 iDress. All rights reserved.
 //
 
+// ----------- 悬浮菜单SPPageMenu的框架github地址:https://github.com/SPStore/SPPageMenu ---------
+// ----------- 本demo地址:https://github.com/SPStore/HVScrollView ----------
+
 #import "ViewController.h"
 #import "MyHeaderView.h"
 #import "SPPageMenu.h"
@@ -27,12 +30,9 @@
 @property (nonatomic, strong) MyHeaderView *headerView;
 @property (nonatomic, strong) SPPageMenu *pageMenu;
 
-@property (nonatomic, assign) NSInteger selectedIndex;
-
 @property (nonatomic, assign) CGFloat lastPageMenuY;
 
 @property (nonatomic, assign) CGPoint lastPoint;
-@property (nonatomic, assign) RefreshingState state;
 @end
 
 @implementation ViewController
@@ -64,36 +64,12 @@
     [self.scrollView addSubview:self.childViewControllers[0].view];
     
     // 监听子控制器发出的通知
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subScrollViewDidScroll:) name:@"SubScrollViewDidScroll" object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshing:) name:@"isRefreshing" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(subScrollViewDidScroll:) name:ChildScrollViewDidScrollNSNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshState:) name:ChildScrollViewRefreshStateNSNotification object:nil];
     
 }
 
-#pragma mark - 刷新通知
-- (void)refreshing:(NSNotification *)noti {
-    RefreshingState state = [noti.object integerValue];
-    if (state == RefreshingStateRefreshing) {
-        self.scrollView.userInteractionEnabled = NO;
-    } else {
-        self.scrollView.userInteractionEnabled = YES;
-    }
-}
-
-// self.scrollView的代理方法
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-
-    BaseViewController *baseVc = self.childViewControllers[_selectedIndex];
-    if (scrollView == self.scrollView) {
-        // 如果scrollView的内容很少，在屏幕范围内，则自动回落
-        if (self.state != RefreshingStateRefreshing) {
-            if (baseVc.scrollView.contentSize.height < kScreenH && [baseVc isViewLoaded]) {
-                [baseVc.scrollView setContentOffset:CGPointMake(0, -kScrollViewBeginTopInset) animated:YES];
-            }
-        }
-    }
-}
-
+#pragma mark - 通知
 
 // 子控制器上的scrollView已经滑动的代理方法所发出的通知(核心)
 - (void)subScrollViewDidScroll:(NSNotification *)noti {
@@ -105,7 +81,7 @@
     CGFloat distanceY;
     
     // 取出的scrollingScrollView并非是唯一的，当有多个子控制器上的scrollView同时滑动时都会发出通知来到这个方法，所以要过滤
-    BaseViewController *baseVc = self.childViewControllers[_selectedIndex];
+    BaseViewController *baseVc = self.childViewControllers[self.pageMenu.selectedItemIndex];
     
     if (scrollingScrollView == baseVc.scrollView && baseVc.isFirstViewLoaded == NO) {
         
@@ -164,15 +140,36 @@
     }
 }
 
+- (void)refreshState:(NSNotification *)noti {
+    BOOL state = [noti.userInfo[@"isRefreshing"] boolValue];
+    // 正在刷新时禁止self.scrollView滑动
+    self.scrollView.scrollEnabled = !state;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    
+    BaseViewController *baseVc = self.childViewControllers[self.pageMenu.selectedItemIndex];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (baseVc.scrollView.contentSize.height < kScreenH && [baseVc isViewLoaded]) {
+            [baseVc.scrollView setContentOffset:CGPointMake(0, -kScrollViewBeginTopInset) animated:YES];
+        }
+    });
+}
+
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    NSInteger index = scrollView.contentOffset.x / scrollView.frame.size.width;
-    // 手动滑scrollView,pageMenu会根据传进去的index选中index对应的button
-    [self.pageMenu selectButtonAtIndex:index];
+    BaseViewController *baseVc = self.childViewControllers[self.pageMenu.selectedItemIndex];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (baseVc.scrollView.contentSize.height < kScreenH && [baseVc isViewLoaded]) {
+            [baseVc.scrollView setContentOffset:CGPointMake(0, -kScrollViewBeginTopInset) animated:YES];
+        }
+    });
 }
 
 #pragma mark - SPPageMenuDelegate
-- (void)pageMenu:(SPPageMenu *)pageMenu buttonClickedFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex {
-    _selectedIndex = toIndex;
+- (void)pageMenu:(SPPageMenu *)pageMenu itemSelectedFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex {
+    if (!self.childViewControllers.count) { return;}
     // 如果上一次点击的button下标与当前点击的buton下标之差大于等于2,说明跨界面移动了,此时不动画.
     if (labs(toIndex - fromIndex) >= 2) {
         [self.scrollView setContentOffset:CGPointMake(_scrollView.frame.size.width * toIndex, 0) animated:NO];
@@ -198,6 +195,7 @@
     [self.scrollView addSubview:targetViewController.view];
 }
 
+
 - (void)panGestureRecognizerAction:(UIPanGestureRecognizer *)pan {
     if (pan.state == UIGestureRecognizerStateBegan) {
         
@@ -206,7 +204,7 @@
         CGFloat distanceY = currenrPoint.y - self.lastPoint.y;
         self.lastPoint = currenrPoint;
 
-        BaseViewController *baseVc = self.childViewControllers[_selectedIndex];
+        BaseViewController *baseVc = self.childViewControllers[self.pageMenu.selectedItemIndex];
         CGPoint offset = baseVc.scrollView.contentOffset;
         offset.y += -distanceY;
         if (offset.y <= -kScrollViewBeginTopInset) {
@@ -269,16 +267,15 @@
 - (SPPageMenu *)pageMenu {
     
     if (!_pageMenu) {
-        _pageMenu = [SPPageMenu pageMenuWithFrame:CGRectMake(0, CGRectGetMaxY(self.headerView.frame), kScreenW, kPageMenuH) array:@[@"第一个",@"第二个",@"第三个",@"第四个"]];
-        _pageMenu.backgroundColor = [UIColor whiteColor];
+        _pageMenu = [SPPageMenu pageMenuWithFrame:CGRectMake(0, CGRectGetMaxY(self.headerView.frame), kScreenW, kPageMenuH) trackerStyle:SPPageMenuTrackerStyleLineLongerThanItem];
+        [_pageMenu setItems:@[@"第一页",@"第二页",@"第三页",@"第四页"] selectedItemIndex:0];
         _pageMenu.delegate = self;
-        _pageMenu.buttonFont = [UIFont systemFontOfSize:16];
-        _pageMenu.selectedTitleColor = [UIColor blackColor];
-        _pageMenu.unSelectedTitleColor = [UIColor colorWithWhite:0 alpha:0.6];
-        _pageMenu.trackerColor = [UIColor orangeColor];
-        _pageMenu.firstButtonX = 15;
-        _pageMenu.allowBeyondScreen = NO;
-        _pageMenu.equalWidths = NO;
+        _pageMenu.itemTitleFont = [UIFont systemFontOfSize:16];
+        _pageMenu.selectedItemTitleColor = [UIColor blackColor];
+        _pageMenu.unSelectedItemTitleColor = [UIColor colorWithWhite:0 alpha:0.6];
+        _pageMenu.tracker.backgroundColor = [UIColor orangeColor];
+        _pageMenu.permutationWay = SPPageMenuPermutationWayNotScrollEqualWidths;
+        _pageMenu.bridgeScrollView = self.scrollView;
         
     }
     return _pageMenu;

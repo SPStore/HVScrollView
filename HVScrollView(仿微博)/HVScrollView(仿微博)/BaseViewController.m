@@ -6,10 +6,14 @@
 //  Copyright © 2017年 iDress. All rights reserved.
 //
 
+// ----------- 悬浮菜单SPPageMenu的框架github地址:https://github.com/SPStore/SPPageMenu ---------
+// ----------- 本demo地址:https://github.com/SPStore/HVScrollView ----------
+
 #import "BaseViewController.h"
 
 @interface BaseViewController () <UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, assign) NSInteger rowCount;
 @end
 
 @implementation BaseViewController
@@ -20,10 +24,28 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pageTitleViewToTop) name:@"headerViewToTop" object:nil];
 
     [self.view addSubview:self.tableView];
+    
+    self.tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        // 上拉加载
+        [self upPullLoadMoreData];
+    }];
 }
+
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+// 上拉加载
+- (void)upPullLoadMoreData {
+    
+    self.rowCount = 30;
+    [self.tableView reloadData];
+    // 模拟网络请求，1秒后结束刷新
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.rowCount = 20;
+        [self.tableView.mj_footer endRefreshing];
+    });
 }
 
 - (void)pageTitleViewToTop {

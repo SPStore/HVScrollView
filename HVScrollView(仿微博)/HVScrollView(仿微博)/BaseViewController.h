@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MJRefresh.h"
 
 #define PageMenuH 40
 #define NaviH 64

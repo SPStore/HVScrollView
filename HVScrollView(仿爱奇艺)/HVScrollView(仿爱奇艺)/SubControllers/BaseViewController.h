@@ -10,6 +10,13 @@
 #import "MyHeaderView.h"
 #import "HeaderContentView.h"
 
+#define kHeaderViewH 200
+#define kPageMenuH 40
+#define kNaviH 0
+
+UIKIT_EXTERN NSNotificationName const ChildScrollViewDidScrollNSNotification;
+UIKIT_EXTERN NSNotificationName const ChildScrollViewRefreshStateNSNotification;
+
 @interface BaseViewController : UIViewController  <UITableViewDataSource,UITableViewDelegate>
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, strong) MyHeaderView *headerView;

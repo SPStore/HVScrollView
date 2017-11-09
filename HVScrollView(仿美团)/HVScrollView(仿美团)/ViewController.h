@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+UIKIT_EXTERN NSNotificationName const ChildScrollViewDidScrollNSNotification;
+UIKIT_EXTERN NSNotificationName const ChildScrollViewRefreshStateNSNotification;
+
 @interface ViewController : UIViewController
 
 

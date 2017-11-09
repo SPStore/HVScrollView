@@ -9,10 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "MyHeaderView.h"
 
-typedef NS_ENUM(NSInteger,RefreshingState) {
-    RefreshingStateRefreshing,  // 正在刷新
-    RefreshingStateEndRefresh,  // 结束刷新
-};
+UIKIT_EXTERN NSNotificationName const ChildScrollViewDidScrollNSNotification;
+UIKIT_EXTERN NSNotificationName const ChildScrollViewRefreshStateNSNotification;
 
 @interface BaseViewController : UIViewController
 @property (nonatomic, strong) UIScrollView *scrollView;

@@ -2,89 +2,165 @@
 //  SPPageMenu.h
 //  SPPageMenu
 //
-//  Created by leshengping on 16/12/17.
-//  Copyright © 2016年 leshengping. All rights reserved.
+//  Created by 乐升平 on 17/10/26. https://github.com/SPStore/SPPageMenu
+//  Copyright © 2017年 iDress. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+typedef NS_ENUM(NSInteger, SPPageMenuTrackerStyle) {
+    SPPageMenuTrackerStyleLine = 0,                  // 下划线,默认与item等宽
+    SPPageMenuTrackerStyleLineLongerThanItem,        // 下划线,比item要长(长度为item的宽+间距)
+    SPPageMenuTrackerStyleLineAttachment,            // 下划线依恋样式
+    SPPageMenuTrackerStyleTextZoom,                  // 文字缩放
+    SPPageMenuTrackerStyleRoundedRect,               // 圆角矩形
+    SPPageMenuTrackerStyleRect                       // 矩形
+};
+
+typedef NS_ENUM(NSInteger, SPPageMenuPermutationWay) {
+    SPPageMenuPermutationWayScrollAdaptContent = 0,   // 自适应内容,可以左右滑动
+    SPPageMenuPermutationWayNotScrollEqualWidths,     // 等宽排列,不可以滑动,整个内容被控制在pageMenu的范围之内,等宽是根据pageMenu的总宽度对每个item均分
+    SPPageMenuPermutationWayNotScrollAdaptContent     // 自适应内容,不可以滑动,整个内容被控制在pageMenu的范围之内,这种排列方式下,自动计算item之间的间距,itemPadding属性设置无效
+};
+
+typedef NS_ENUM(NSInteger, SPItemImagePosition) {
+    SPItemImagePositionDefault,   // 默认图片在左边
+    SPItemImagePositionLeft,      // 图片在左边
+    SPItemImagePositionTop,       // 图片在上面
+    SPItemImagePositionRight,     // 图片在右边
+    SPItemImagePositionBottom     // 图片在下面
+};
+
 @class SPPageMenu;
+
 @protocol SPPageMenuDelegate <NSObject>
 
 @optional
-/** 
- * pageMenu:菜单对象
- * index:当前选中的button下标
- */
-- (void)pageMenu:(SPPageMenu *)pageMenu buttonClickedAtIndex:(NSInteger)index;
-/** 
- * pageMenu:菜单对象
- * fromIndex:上一个被选中的button下标
- * toIndex:当前被选中的button下标
- */
-- (void)pageMenu:(SPPageMenu *)pageMenu buttonClickedFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex;
-@end
+- (void)pageMenu:(SPPageMenu *)pageMenu functionButtonClicked:(UIButton *)functionButton;
+// 若以下2个代理方法同时实现了，那么只会走第2个代理方法
+- (void)pageMenu:(SPPageMenu *)pageMenu itemSelectedAtIndex:(NSInteger)index;
+- (void)pageMenu:(SPPageMenu *)pageMenu itemSelectedFromIndex:(NSInteger)fromIndex toIndex:(NSInteger)toIndex;
 
+@end
 
 @interface SPPageMenu : UIView
 
+// 创建pagMenu
++ (instancetype)pageMenuWithFrame:(CGRect)frame trackerStyle:(SPPageMenuTrackerStyle)trackerStyle;
+- (instancetype)initWithFrame:(CGRect)frame trackerStyle:(SPPageMenuTrackerStyle)trackerStyle;
+
+/**
+ *  传递数组(数组元素只能是NSString或UIImage类型)
+ *
+ *  @param items    数组
+ *  @param selectedItemIndex  选中哪个item
+ */
+- (void)setItems:(nullable NSArray *)items selectedItemIndex:(NSUInteger)selectedItemIndex;
+
+/** 选中的item下标 */
+@property (nonatomic) NSUInteger selectedItemIndex;
+
+/** 是否需要文字渐变,默认为YES */
+@property (nonatomic, assign) BOOL needTextColorGradients;
+
+/** 外界的srollView，pageMenu会监听该scrollView的滚动状况，让跟踪器时刻跟随此scrollView滑动 */
+@property (nonatomic, strong) UIScrollView *bridgeScrollView;
+/** 关闭跟踪器的跟随效果,在外界传了scrollView进来或者调用了moveTrackerFollowScrollView的情况下,如果为YES，则当外界滑动scrollView时，跟踪器不会时刻跟随,只有滑动结束才会跟踪; 如果为NO，跟踪器会时刻跟随scrollView */
+@property (nonatomic, assign) BOOL closeTrackerFollowingMode;
+
+/** 是否显示功能按钮(功能按钮显示在最右侧),默认为NO */
+@property (nonatomic, assign) BOOL showFuntionButton;
+/** item之间的间距,当permutationWay为‘SPPageMenuPermutationWayNotScrollAdaptContent’时此属性无效 */
+@property (nonatomic, assign) CGFloat itemPadding;
+/** item的标题字体 */
+@property (nonnull, nonatomic, strong) UIFont *itemTitleFont;
+/** 选中的item标题颜色 */
+@property (nonatomic, strong) UIColor *selectedItemTitleColor;
+/** 未选中的item标题颜色 */
+@property (nonatomic, strong) UIColor *unSelectedItemTitleColor;
+/** 跟踪器 */
+@property (nonatomic, readonly) UIImageView *tracker;
+/** 分割线 */
+@property (nonatomic, readonly) UIImageView *dividingLine;
+/** 代理 */
 @property (nonatomic, weak) id<SPPageMenuDelegate> delegate;
 
-/** block方式监听button被点击，外界可选择代理方式，也可以选择block方式 */
-@property (nonatomic, copy) void(^buttonClickedBlock)(NSInteger index);
-@property (nonatomic, copy) void(^buttonClicked_from_to_Block)(NSInteger fromIndex,  NSInteger toIndex);
+/** 内容的四周内边距(内容不包括分割线) */
+@property (nonatomic, assign) UIEdgeInsets contentInset;
+/** 排列方式 */
+@property (nonatomic, assign) SPPageMenuPermutationWay permutationWay;
 
+// 插入item,插入和删除操作时,如果itemIndex超过了了items的个数,则不做任何操作
+- (void)insertItemWithTitle:(nullable NSString *)title atIndex:(NSUInteger)itemIndex animated:(BOOL)animated;
+- (void)insertItemWithImage:(nullable UIImage *)image  atIndex:(NSUInteger)itemIndex animated:(BOOL)animated;
+// 如果移除的正是当前选中的item(当前选中的item下标不为0),删除之后,选中的item会切换为上一个item
+- (void)removeItemAtIndex:(NSUInteger)itemIndex animated:(BOOL)animated;
+- (void)removeAllItems;
 
-/** button之间的间距,默认为30 */
-@property (nonatomic, assign) CGFloat spacing;
-/** 第一个button的左边距，默认为间距的一半 */
-@property (nonatomic, assign) CGFloat firstButtonX;
-/** button的字体,默认为15号字体 */
-@property (nonatomic, strong) UIFont *buttonFont;
-/** 选中的button的字体颜色 */
-@property (nonatomic, strong) UIColor *selectedTitleColor;
-/** 未选中的button字体颜色,默认为黑色 */
-@property (nonatomic, strong) UIColor *unSelectedTitleColor;
-/** 分割线颜色，默认为亮灰色 */
-@property (nonatomic, strong) UIColor *breaklineColor;
-/** 是否显示分割线,默认为YES */
-@property (nonatomic, assign, getter=isShowBreakline) BOOL showBreakline;
-/** 是否显示跟踪器，默认为YES */
-@property (nonatomic, assign, getter=isShowTracker) BOOL showTracker;
-/** 跟踪器的高度,默认为2.0f */
-@property (nonatomic, assign) CGFloat trackerHeight;
-/** 跟踪器的颜色，默认与选中的button字体颜色一致 */
-@property (nonatomic, strong) UIColor *trackerColor;
-/** 是否开启动画,默认为NO */
-@property (nonatomic, assign, getter=isOpenAnimation) BOOL openAnimation;
-/** 跟踪器的动画速率*/
-@property (nonatomic, assign) CGFloat animationSpeed;
+// 设置指定item的标题,设置后，如果原先的item为image，则image会被title替换
+- (void)setTitle:(nullable NSString *)title forItemAtIndex:(NSUInteger)itemIndex;
+// 获取指定item的标题
+- (nullable NSString *)titleForItemAtIndex:(NSUInteger)itemIndex;
 
+// 设置指定item的图片,设置后，如果原先的item为title，则title会被图片替换
+- (void)setImage:(nullable UIImage *)image forItemAtIndex:(NSUInteger)itemIndex;
+// 获取指定item的图片
+- (nullable UIImage *)imageForItemAtIndex:(NSUInteger)itemIndex;
 
-/** 当以下两个属性同时为NO时，spacing和firstButtonX属性将不受用户控制，这是合情合理的 */
-/** 是否允许超出屏幕,默认为YES,如果设置了NO,则菜单上的所有button都将示在在屏幕范围之内，并且默认等宽，整体居中显示 ，如果想要button根据文字自适应宽度，还要配合下面的“equalWidths”属性 */
-@property (nonatomic, assign, getter=isAllowBeyondScreen) BOOL allowBeyondScreen;
-/** 是否等宽，默认为YES,这个属性只有在屏幕范围之内的布局方式才有效 */
-@property (nonatomic, assign, getter=isEqualWidths) BOOL equalWidths;
+// 设置指定item的enabled状态
+- (void)setEnabled:(BOOL)enaled forItemAtIndex:(NSUInteger)itemIndex;
+// 获取指定item的enabled状态
+- (BOOL)enabledForItemAtIndex:(NSUInteger)itemIndex;
 
-/** 快速创建菜单 */
-+ (SPPageMenu *)pageMenuWithFrame:(CGRect)frame array:(NSArray *)array;
+// 设置指定item的宽度(如果width为0,则item将自动计算)
+- (void)setWidth:(CGFloat)width forItemAtIndex:(NSUInteger)itemIndex;
+// 获取指定item的宽度
+- (CGFloat)widthForItemAtIndex:(NSUInteger)itemIndex;
 
-
-/*
- *  外界只要告诉该类index,内部会处理哪个button被选中
+/**
+ *  同时为指定item设置标题和图片
+ *
+ *  @param title    标题
+ *  @param image    图片
+ *  @param imagePosition    图片的位置，分上、左、下、右
+ *  @param ratio            图片所占item的比例,默认0.5,如果给0,同样会自动默认为0.5
+ *  @param itemIndex        item的下标
  */
-- (void)selectButtonAtIndex:(NSInteger)index;
+- (void)setTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio forItemIndex:(NSUInteger)itemIndex;
 
-/*
- *  1.这个方法的功能是实现跟踪器跟随scrollView的滚动而滚动;
- *  2.调用这个方法必须在scrollViewDidScrollView里面调;
- *  3.beginOffset:scrollView刚开始滑动的时候起始偏移量,在scrollViewWillBeginDragging:方法内部获取起始偏移量;
- *  4.scrollView:外面正在拖拽的scrollView;
+/**
+ *  同时为functionButton设置标题和图片
+ *
+ *  @param title    标题
+ *  @param image    图片
+ *  @param imagePosition    图片的位置，分上、左、下、右
+ *  @param ratio            图片所占item的比例,默认0.5,如果给0,同样会自动默认为0.5
+ *  @param state            控件状态
  */
-- (void)moveTrackerFollowScrollView:(UIScrollView *)scrollView beginOffset:(CGFloat)beginOffset;
+- (void)setFunctionButtonTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio forState:(UIControlState)state;
+
+/* 为functionButton配置相关属性，如设置字体、文字颜色等
+   在此,attributes中,只有NSFontAttributeName、NSForegroundColorAttributeName、NSBackgroundColorAttributeName有效
+ */
+- (void)setFunctionButtonTitleTextAttributes:(nullable NSDictionary *)attributes forState:(UIControlState)state;
+
+/* 1.让跟踪器时刻跟随外界scrollView滑动,实现了让跟踪器的宽度逐渐适应item宽度的功能;
+   2.这个方法用于scrollViewDidScroll代理方法中，如
+ 
+    - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+        [self.pageMenu moveTrackerFollowScrollView:scrollView];
+    }
+ 
+    3.如果外界对SPPageMenu的属性"bridgeScrollView"赋了值，那么外界就可以不用在scrollViewDidScroll方法中调用这个方法来实现跟踪器时刻跟随外界scrollView的效果,内部会自动处理; 外界对SPPageMenu的属性"bridgeScrollView"赋值是实现此效果的最简便的操作
+    4.如果不想要此效果,可设置closeTrackerFollowingMode==YES
+ */
+- (void)moveTrackerFollowScrollView:(UIScrollView *)scrollView;
+
 @end
 
+NS_ASSUME_NONNULL_END
 
 
 

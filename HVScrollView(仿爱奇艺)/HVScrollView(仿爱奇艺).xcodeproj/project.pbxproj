@@ -352,12 +352,12 @@
 				0944F7821F0F27CB003856A5 /* BaseViewController.m */,
 				0944F7831F0F27CB003856A5 /* FirstViewController.h */,
 				0944F7841F0F27CB003856A5 /* FirstViewController.m */,
-				0944F7851F0F27CB003856A5 /* FourViewController.h */,
-				0944F7861F0F27CB003856A5 /* FourViewController.m */,
 				0944F78C1F0F27CB003856A5 /* SecondViewController.h */,
 				0944F78D1F0F27CB003856A5 /* SecondViewController.m */,
 				0944F78E1F0F27CB003856A5 /* ThirdViewController.h */,
 				0944F78F1F0F27CB003856A5 /* ThirdViewController.m */,
+				0944F7851F0F27CB003856A5 /* FourViewController.h */,
+				0944F7861F0F27CB003856A5 /* FourViewController.m */,
 			);
 			path = SubControllers;
 			sourceTree = "<group>";
@@ -766,6 +766,7 @@
 				0944F73C1F0F26FA003856A5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0944F73D1F0F26FA003856A5 /* Build configuration list for PBXNativeTarget "HVScrollView(仿爱奇艺)Tests" */ = {
 			isa = XCConfigurationList;
@@ -774,6 +775,7 @@
 				0944F73F1F0F26FA003856A5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0944F7401F0F26FA003856A5 /* Build configuration list for PBXNativeTarget "HVScrollView(仿爱奇艺)UITests" */ = {
 			isa = XCConfigurationList;
@@ -782,6 +784,7 @@
 				0944F7421F0F26FA003856A5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
