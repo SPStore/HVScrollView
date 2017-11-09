@@ -42,4 +42,6 @@
 ## 美团和爱奇艺的若干个子tableView联动原理
 当滑动其中一个子tableView时（我叫它主动tableView），发出一个通知，该通知由父控制器监听，在父控制器中遍历每个子tableVeiw（除去主动tableView之外的其余tableView叫被动tableView），让被动tableView跟随主动tableView滑动，当滑动到顶部，让悬浮菜单悬停。
 
+大家在参考这3个demo的时候，悬浮菜单尽量使用[SPPageMenu](https://github.com/SPStore/SPPageMenu)，这是我自己封装的一个框架
+
 
