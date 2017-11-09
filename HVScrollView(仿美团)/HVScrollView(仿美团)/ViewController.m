@@ -42,6 +42,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.title = @"仿美团";
+    
     if (@available(iOS 11.0, *)) {
         self.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
     } else {
@@ -51,6 +53,7 @@
     
     self.navBarTintColor = [UIColor whiteColor];
     self.navAlpha = 0;
+    self.navTitleColor = [UIColor clearColor];
     
     
     self.lastPageMenuY = kHeaderViewH;
@@ -234,6 +237,7 @@
         CGFloat alpha = (offsetY)/(kHeaderViewH-64);
         // 该属性是设置导航栏背景渐变
         self.navAlpha = alpha;
+        self.navTitleColor = [UIColor colorWithWhite:0 alpha:alpha];
         
     } else {
         self.navAlpha = 0;

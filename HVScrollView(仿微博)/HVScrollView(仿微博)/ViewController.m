@@ -39,6 +39,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.title = @"仿微博";
     self.navigationController.navigationBar.translucent = NO;
     
     [self.view addSubview:self.tableView];

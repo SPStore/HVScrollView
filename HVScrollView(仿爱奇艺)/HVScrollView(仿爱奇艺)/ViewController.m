@@ -41,6 +41,7 @@
     //self.automaticallyAdjustsScrollViewInsets = NO;
 
     self.navigationController.navigationBar.translucent = NO;
+    self.title = @"仿爱奇艺";
     
     self.lastPageMenuY = kHeaderViewH;
     
