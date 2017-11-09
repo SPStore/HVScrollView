@@ -22,7 +22,9 @@
 
 #define kHeaderViewH 200
 #define kPageMenuH 40
-#define kNaviH 64
+#define kNaviH (isIPhoneX ? 84 : 64)
+
+#define isIPhoneX kScreenH==812
 
 @interface ViewController () <SPPageMenuDelegate,UIScrollViewDelegate>
 
@@ -40,9 +42,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.automaticallyAdjustsScrollViewInsets = NO;
+    if (@available(iOS 11.0, *)) {
+        self.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        // Fallback on earlier versions
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
+    
     self.navBarTintColor = [UIColor whiteColor];
     self.navAlpha = 0;
+    
     
     self.lastPageMenuY = kHeaderViewH;
     
@@ -245,7 +254,7 @@
     
     if (!_scrollView) {
         _scrollView = [[UIScrollView alloc] init];
-        _scrollView.frame = CGRectMake(0, 0, kScreenW, kScreenH);
+        _scrollView.frame = CGRectMake(0, 0, kScreenW, kScreenH-bottomMargin);
         _scrollView.delegate = self;
         _scrollView.pagingEnabled = YES;
         _scrollView.showsVerticalScrollIndicator = NO;

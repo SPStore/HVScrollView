@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "MyHeaderView.h"
 
+#define isIPhoneX kScreenH==812
+#define bottomMargin (isIPhoneX ? 34 : 0)
+
 UIKIT_EXTERN NSNotificationName const ChildScrollViewDidScrollNSNotification;
 UIKIT_EXTERN NSNotificationName const ChildScrollViewRefreshStateNSNotification;
 

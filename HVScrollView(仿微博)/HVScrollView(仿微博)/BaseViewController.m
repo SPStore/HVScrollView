@@ -52,6 +52,11 @@
     self.tableView.contentOffset = CGPointZero;
 }
 
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    self.tableView.frame = CGRectMake(0, 0, kScreenW, kScreenH-insert);
+}
+
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     

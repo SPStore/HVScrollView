@@ -156,7 +156,7 @@
     // 如果已经加载过，就不再加载
     if ([targetViewController isViewLoaded]) return;
     
-    targetViewController.view.frame = CGRectMake(kScreenW*toIndex, 0, kScreenW, kScreenH);
+    targetViewController.view.frame = CGRectMake(kScreenW*toIndex, 0, kScreenW, kScreenH-insert);
     UIScrollView *s = targetViewController.view.subviews[0];
     CGPoint contentOffset = s.contentOffset;
     if (contentOffset.y >= HeaderViewH) {
@@ -170,7 +170,7 @@
     
     if (!_scrollView) {
         _scrollView = [[UIScrollView alloc] init];
-        _scrollView.frame = CGRectMake(0, PageMenuH, kScreenW, kScreenH);
+        _scrollView.frame = CGRectMake(0, PageMenuH, kScreenW, kScreenH-insert);
         _scrollView.delegate = self;
         _scrollView.pagingEnabled = YES;
         _scrollView.showsVerticalScrollIndicator = NO;

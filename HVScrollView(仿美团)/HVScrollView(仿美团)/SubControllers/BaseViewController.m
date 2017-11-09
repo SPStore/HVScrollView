@@ -39,6 +39,13 @@ NSNotificationName const ChildScrollViewRefreshStateNSNotification = @"ChildScro
         // 上拉加载
         [self upPullLoadMoreData];
     }];
+    
+    if (@available(iOS 11.0, *)) {
+        self.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    } else {
+        // Fallback on earlier versions
+    }
+
 }
 
 
@@ -93,7 +100,7 @@ NSNotificationName const ChildScrollViewRefreshStateNSNotification = @"ChildScro
 - (UITableView *)tableView {
     
     if (!_tableView) {
-        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenW, kScreenH) style:UITableViewStylePlain];
+        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenW, kScreenH-bottomMargin) style:UITableViewStylePlain];
         _tableView.contentInset = UIEdgeInsetsMake(kScrollViewBeginTopInset, 0, 0, 0);
         _tableView.scrollIndicatorInsets = UIEdgeInsetsMake(kScrollViewBeginTopInset, 0, 0, 0);
         _tableView.dataSource = self;

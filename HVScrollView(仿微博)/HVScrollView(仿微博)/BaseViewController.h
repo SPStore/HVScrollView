@@ -13,6 +13,9 @@
 #define NaviH 64
 #define HeaderViewH 200
 
+#define isIPhoneX kScreenH==812
+#define insert (isIPhoneX ? (84+34+PageMenuH) : 0)
+
 @interface BaseViewController : UIViewController
 
 @end

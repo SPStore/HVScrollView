@@ -54,6 +54,7 @@ NSNotificationName const ChildScrollViewRefreshStateNSNotification = @"ChildScro
         [[NSNotificationCenter defaultCenter] postNotificationName:ChildScrollViewRefreshStateNSNotification object:nil userInfo:@{@"isRefreshing":@(NO)}];
 
     });
+    
 }
 
 // 上拉加载
@@ -110,7 +111,8 @@ NSNotificationName const ChildScrollViewRefreshStateNSNotification = @"ChildScro
 - (UITableView *)tableView {
     
     if (!_tableView) {
-        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenW, kScreenH-64) style:UITableViewStylePlain];
+        _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, kScreenW, kScreenH-bottomMargin) style:UITableViewStylePlain];
+        
         _tableView.dataSource = self;
         _tableView.delegate = self;
         _tableView.layer.masksToBounds = NO;

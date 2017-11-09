@@ -14,6 +14,9 @@
 #define kPageMenuH 40
 #define kNaviH 0
 
+#define isIPhoneX kScreenH==812
+#define bottomMargin (isIPhoneX ? (84+34) : 64)
+
 UIKIT_EXTERN NSNotificationName const ChildScrollViewDidScrollNSNotification;
 UIKIT_EXTERN NSNotificationName const ChildScrollViewRefreshStateNSNotification;
 

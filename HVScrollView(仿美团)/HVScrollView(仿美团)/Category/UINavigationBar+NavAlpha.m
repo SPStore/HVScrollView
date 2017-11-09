@@ -36,8 +36,13 @@ static char *navAlphaKey = "navAlphaKey";
         }
     }
     /// 黑线
-    UIView *shadowView = [barBackground valueForKey:@"_shadowView"];
-    shadowView.alpha = alpha;
+    UIImageView *shadowView = [barBackground valueForKey:@"_shadowView"];
+    if (alpha < 0.01) {
+        shadowView.hidden = YES;
+    } else {
+        shadowView.hidden = NO;
+        shadowView.alpha = alpha;
+    }
     
     objc_setAssociatedObject(self, navAlphaKey, @(alpha), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
