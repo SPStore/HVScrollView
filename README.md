@@ -37,4 +37,4 @@
 * 效果图   
 ![image](https://github.com/SPStore/HVScrollView/blob/master/爱奇艺.gif)
 
-*爱奇艺难就难在头部的处理上，如果像美团一样，将头视图添加在父控制器的view上，当先添横向scrollView，再添加头视图时，那么头视图会遮挡横向滑动的scrollView，从而滑动头部的时候就不能上下滑动，只能通过添加手势，但是手势很难达到scrollView的弹性效果，滑动起来很僵硬；当先添加头视图，再添加横向scrollView时，横向scrollView又会把头视图遮挡，从而导致头视图不具备任何事件.
+*爱奇艺难就难在头部的处理上，如果像美团一样，将头视图添加在父控制器的view上，当先添横向scrollView，再添加头视图时，那么头视图会遮挡横向滑动的scrollView，从而滑动头部的时候就不能上下滑动，只能通过添加手势，但是手势很难达到scrollView的弹性效果，滑动起来很僵硬；当先添加头视图，再添加横向scrollView时，横向scrollView又会把头视图遮挡，从而导致头视图不具备任何事件.*
