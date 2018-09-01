@@ -21,7 +21,7 @@
 ![image](https://github.com/SPStore/HVScrollView/blob/master/微博.gif)
 ## 美团    难度系数：★★★★★★★
 * 层级结构描述    
-首先是一个父控制器，父控制器添加一个横向滑动的全屏scrollView，再添加头视图和悬浮菜单，也就是，这个横向滑动的scrollView，头视图和悬浮菜单都添加在父控制器的view上.横向滑动的scrollView就是用来添加子控制器,每个子控制器有一个tableView。
+首先是一个父控制器，父控制器添加一个横向滑动的全屏scrollView，再添加头视图和悬浮菜单，即横向滑动的scrollView，头视图和悬浮菜单都添加在父控制器的view上。横向滑动的scrollView就是用来添加子控制器,每个子控制器有一个tableView。
 * 重要功能
     1. 垂直方向上局部滑动，头部具有平移手势，可以通过平移整体上下滑动，但是不具备scrollView的弹性效果
     2. 头部能够触发事件
