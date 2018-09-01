@@ -45,7 +45,7 @@
 ## 美团和爱奇艺的若干个子tableView联动原理
 当滑动其中一个子tableView时（我叫它主动tableView），发出一个通知，该通知由父控制器监听，在父控制器中遍历每个子tableVeiw（除去主动tableView之外的其余tableView叫被动tableView），让被动tableView跟随主动tableView滑动，当滑动到顶部，让分页菜单悬停。
 
-题外话：爱奇艺的demo和爱奇艺原先app的效果几乎完全一致，原app在刷新的时候切换tableView时，刷新文字不会消失，这也是爱奇艺的一个bug。想要看爱奇艺原appp的效果，你可以点击爱奇艺app的第5个tabBar："泡泡"，然后找一个明星或者其他头像点进去就能看到
+题外话：爱奇艺的demo和爱奇艺原app的效果几乎完全一致，原app在刷新的时候切换tableView时，刷新文字不会消失，这也是爱奇艺的一个bug，我的demo在刷新时禁止scrollView滑动了。想要看爱奇艺原app的效果，你可以点击爱奇艺app的第5个tabBar："泡泡"，然后找一个明星或者其他头像点进去就能看到。
 
 大家在参考这3个demo的时候，分页菜单尽量使用[SPPageMenu](https://github.com/SPStore/SPPageMenu)，这是我自己封装的一个框架
 
