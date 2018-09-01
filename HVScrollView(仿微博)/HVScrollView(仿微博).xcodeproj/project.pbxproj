@@ -413,7 +413,7 @@
 				TargetAttributes = {
 					0944F85B1F0F2BD7003856A5 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = MP8K63J94Y;
+						DevelopmentTeam = N7GTHGMGVY;
 						ProvisioningStyle = Automatic;
 					};
 					0944F8741F0F2BD7003856A5 = {
@@ -659,7 +659,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = MP8K63J94Y;
+				DEVELOPMENT_TEAM = N7GTHGMGVY;
 				GCC_PREFIX_HEADER = "HVScrollView(仿微博)/PrefixHeader.pch";
 				INFOPLIST_FILE = "HVScrollView(仿微博)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -672,7 +672,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = MP8K63J94Y;
+				DEVELOPMENT_TEAM = N7GTHGMGVY;
 				GCC_PREFIX_HEADER = "HVScrollView(仿微博)/PrefixHeader.pch";
 				INFOPLIST_FILE = "HVScrollView(仿微博)/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
