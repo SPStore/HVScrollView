@@ -15,13 +15,13 @@
 * 重要功能
     1. 垂直方向上能够整体滑动，头部依然能够整体上下滑，滑动头部也就是滑动大tableView
     2. 头部能够触发事件
-    3. 支持整体和局部刷新(局部刷新是指刷新的文字显示在悬浮菜单之下，而非导航栏之下)
+    3. 支持整体和局部刷新(局部刷新是指刷新的文字显示在分页菜单之下，而非导航栏之下)
     4. 横向切换tableView，当切换其余tableView再次回到原tableView时不记录原先位置，直接从第0行开始
 * 效果图   
 ![image](https://github.com/SPStore/HVScrollView/blob/master/微博.gif)
 ## 美团    难度系数：★★★★★★★
 * 层级结构描述    
-首先是一个父控制器，父控制器添加一个横向滑动的全屏scrollView，再添加头视图和悬浮菜单，即横向滑动的scrollView，头视图和悬浮菜单都添加在父控制器的view上。横向滑动的scrollView就是用来添加子控制器,每个子控制器有一个tableView。
+首先是一个父控制器，父控制器添加一个横向滑动的全屏scrollView，再添加头视图和分页菜单，即横向滑动的scrollView，头视图和分页菜单都添加在父控制器的view上。横向滑动的scrollView就是用来添加子控制器,每个子控制器有一个tableView。
 * 重要功能
     1. 垂直方向上局部滑动，头部具有平移手势，可以通过平移整体上下滑动，但是不具备scrollView的弹性效果
     2. 头部能够触发事件
@@ -31,7 +31,7 @@
 ![image](https://github.com/SPStore/HVScrollView/blob/master/美团.gif)
 ## 爱奇艺    难度系数：★★★★★★★★★★
 * 层级结构描述        
-首先是一个父控制器，父控制器上添加一个全屏的横向滑动的scrollView，这个横向滑动的scrollView用来添加若干个子控制器，每个子控制器上有个tabelView。**头视图首先添加在第一个子控制器的tableView的tabelHeaderView上**，当横向切换scrollView时，头视图的x值需要改变，改变的方向与scrollView横向滑动的方向相反，否则头视图会跟着scrollView一起横向滑动，当滑动结束时，切换头视图的父视图为下一个控制器的tableView的tableHeaderView。悬浮菜单添加在父控制器上。
+首先是一个父控制器，父控制器上添加一个全屏的横向滑动的scrollView，这个横向滑动的scrollView用来添加若干个子控制器，每个子控制器上有个tabelView。**头视图首先添加在第一个子控制器的tableView的tabelHeaderView上**，当横向切换scrollView时，头视图的x值需要改变，改变的方向与scrollView横向滑动的方向相反，否则头视图会跟着scrollView一起横向滑动，当滑动结束时，切换头视图的父视图为下一个控制器的tableView的tableHeaderView。分页菜单添加在父控制器上。
 * 重要功能
     1. 垂直方向上能够整体滑动，头部可以整体上下滑动，具备scrollView的弹性效果，滑动头部实际上是滑动子tableVeiw
     2. 头部能够触发事件
@@ -40,11 +40,11 @@
 * 效果图   
 ![image](https://github.com/SPStore/HVScrollView/blob/master/爱奇艺.gif)
 
-*爱奇艺难就难在头部的处理上，如果像美团一样，将头视图添加在父控制器的view上，当先添横向scrollView，再添加头视图时，那么头视图会遮挡横向滑动的scrollView，从而滑动头部的时候就不能上下滑动，只能通过添加手势，但是手势很难达到scrollView的弹性效果，滑动起来很僵硬；当先添加头视图，再添加横向scrollView时，横向scrollView又会把头视图遮挡，从而导致头视图不具备任何事件.*
+*爱奇艺难就难在头部的处理上，如果像美团一样，将头视图添加在父控制器的view上，当先添加横向scrollView，再添加头视图时，那么头视图会遮挡横向滑动的scrollView，从而滑动头部的时候就不能上下滑动，只能通过添加手势，但是手势很难达到scrollView的弹性效果，滑动起来很僵硬；当先添加头视图，再添加横向scrollView时，横向scrollView又会把头视图遮挡，从而导致头视图不具备任何事件.*
 
 ## 美团和爱奇艺的若干个子tableView联动原理
-当滑动其中一个子tableView时（我叫它主动tableView），发出一个通知，该通知由父控制器监听，在父控制器中遍历每个子tableVeiw（除去主动tableView之外的其余tableView叫被动tableView），让被动tableView跟随主动tableView滑动，当滑动到顶部，让悬浮菜单悬停。
+当滑动其中一个子tableView时（我叫它主动tableView），发出一个通知，该通知由父控制器监听，在父控制器中遍历每个子tableVeiw（除去主动tableView之外的其余tableView叫被动tableView），让被动tableView跟随主动tableView滑动，当滑动到顶部，让分页菜单悬停。
 
-大家在参考这3个demo的时候，悬浮菜单尽量使用[SPPageMenu](https://github.com/SPStore/SPPageMenu)，这是我自己封装的一个框架
+大家在参考这3个demo的时候，分页菜单尽量使用[SPPageMenu](https://github.com/SPStore/SPPageMenu)，这是我自己封装的一个框架
 
 
