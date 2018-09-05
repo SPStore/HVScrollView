@@ -6,7 +6,7 @@
 //  Copyright © 2017年 iDress. All rights reserved.
 //
 
-// ----------- 悬浮菜单SPPageMenu的框架github地址:https://github.com/SPStore/SPPageMenu ---------
+// ----------- 分页菜单SPPageMenu的框架github地址:https://github.com/SPStore/SPPageMenu ---------
 // ----------- 本demo地址:https://github.com/SPStore/HVScrollView ----------
 
 #import "ViewController.h"
@@ -51,7 +51,7 @@
     // 添加头部视图
     //[self.view addSubview:self.headerView];
     
-    // 添加悬浮菜单
+    // 添加分页菜单
     [self.view addSubview:self.pageMenu];
     
     // 添加4个子控制器
@@ -88,7 +88,7 @@
     
     // 取出的scrollingScrollView并非是唯一的，当有多个子控制器上的scrollView同时滑动时都会发出通知来到这个方法，所以要过滤
     if (scrollingScrollView == baseVc.scrollView && baseVc.isFirstViewLoaded == NO) {
-        // 让悬浮菜单跟随scrollView滑动
+        // 让分页菜单跟随scrollView滑动
         CGRect pageMenuFrame = self.pageMenu.frame;
 
         if (pageMenuFrame.origin.y >= kNaviH) {
@@ -96,7 +96,7 @@
             if (offsetDifference > 0) {
                 
                 if (((scrollingScrollView.contentOffset.y+self.pageMenu.frame.origin.y)>=kHeaderViewH) || scrollingScrollView.contentOffset.y < 0) {
-                    // 悬浮菜单的y值等于当前正在滑动且显示在屏幕范围内的的scrollView的contentOffset.y的改变量(这是最难的点)
+                    // 分页菜单的y值等于当前正在滑动且显示在屏幕范围内的的scrollView的contentOffset.y的改变量(这是最难的点)
                     pageMenuFrame.origin.y += -offsetDifference;
                     if (pageMenuFrame.origin.y <= kNaviH) {
                         pageMenuFrame.origin.y = kNaviH;
@@ -114,7 +114,7 @@
         // 配置头视图的y值
         [self adjustHeaderY];
         
-        // 记录悬浮菜单的y值改变量
+        // 记录分页菜单的y值改变量
         distanceY = pageMenuFrame.origin.y - self.lastPageMenuY;
         self.lastPageMenuY = self.pageMenu.frame.origin.y;
         
@@ -133,7 +133,7 @@
         if (baseVc.scrollView == scrollingScrollView) {
             continue;
         } else {
-            // 除去当前正在滑动的 scrollView之外，其余scrollView的改变量等于悬浮菜单的改变量
+            // 除去当前正在滑动的 scrollView之外，其余scrollView的改变量等于分页菜单的改变量
             CGPoint contentOffSet = baseVc.scrollView.contentOffset;
             contentOffSet.y += -distanceY;
             baseVc.scrollView.contentOffset = contentOffSet;
@@ -157,7 +157,7 @@
     BOOL state = [noti.userInfo[@"isRefreshing"] boolValue];
     // 正在刷新时禁止self.scrollView滑动
     self.scrollView.scrollEnabled = !state;
-    // 正在刷新时禁止触发悬浮菜单的item事件，爱奇艺app中没有处理这个地方，所以当刷新时爱奇艺本身有一个bug，这里我就处理一下
+    // 正在刷新时禁止触发分页菜单的item事件，爱奇艺app中没有处理这个地方，所以当刷新时爱奇艺本身有一个bug，这里我就处理一下
     self.pageMenu.userInteractionEnabled = !state;
 }
 
@@ -168,7 +168,7 @@
 
     // 如果上一次点击的button下标与当前点击的buton下标之差大于等于2,说明跨界面移动了,此时不动画.
     if (labs(toIndex - fromIndex) >= 2) {
-        // 如果动画为NO,会立即调用scrollViewDidScroll，scrollViewDidScroll中做了一个很重要的操作：调整headerView的y值，如果先调scrollViewDidScroll,然后继续来到此方法走完剩余代码，走到targetViewController.headerView = self.headerView这一行时，内部把头视图的origin都归0了，所以有时会导致headerView的origin为(0,0)的情况,我解释一下origin为(0,0)的现象:比如往上滑动第一个tableView，滑动100个像素，停，这时横向滑动scrollView切换到第二个tableView，往下滑动tableView，滑动100个像素，第二个tableView恢复到了原始位置，当然悬浮菜单也回到了原始位置，头视图亦如此，那么这时，切换回第一个talbeView，悬浮菜单已经回到了原始位置，但是此时如果将headerView的origin归0，headerView的位置是跟第一个tableView的头视图的origin一致的，也就是说headerView跟悬浮菜单分离了，我们要的是headerView跟悬浮菜单pageMenu紧紧贴住，这也是要adjustHeaderY的原因
+        // 如果动画为NO,会立即调用scrollViewDidScroll，scrollViewDidScroll中做了一个很重要的操作：调整headerView的y值，如果先调scrollViewDidScroll,然后继续来到此方法走完剩余代码，走到targetViewController.headerView = self.headerView这一行时，内部把头视图的origin都归0了，所以有时会导致headerView的origin为(0,0)的情况,我解释一下origin为(0,0)的现象:比如往上滑动第一个tableView，滑动100个像素，停，这时横向滑动scrollView切换到第二个tableView，往下滑动tableView，滑动100个像素，第二个tableView恢复到了原始位置，当然分页菜单也回到了原始位置，头视图亦如此，那么这时，切换回第一个talbeView，分页菜单已经回到了原始位置，但是此时如果将headerView的origin归0，headerView的位置是跟第一个tableView的头视图的origin一致的，也就是说headerView跟分页菜单分离了，我们要的是headerView跟分页菜单pageMenu紧紧贴住，这也是要adjustHeaderY的原因
         // 要解决上面这个问题，归根结底是要先走完本方法，再去走scrollViewDidScroll，有一种办法是设置动画为YES，如果有动画，不会那么快的调用scrollViewDidScroll，至少有一个动画时间，但是具体多长不太清楚。第二种方法就是将其放在主线程，但是这种办法其实也不是特别牢靠，异步到底谁先走也没有个定数
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.scrollView setContentOffset:CGPointMake(_scrollView.frame.size.width * toIndex, 0) animated:NO];

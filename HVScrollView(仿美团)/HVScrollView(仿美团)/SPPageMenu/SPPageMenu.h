@@ -16,7 +16,7 @@ typedef NS_ENUM(NSInteger, SPPageMenuTrackerStyle) {
     SPPageMenuTrackerStyleLineAttachment,            // 下划线“依恋”样式，此样式下默认宽度为字体的pointSize，你可以通过trackerWidth自定义宽度
     SPPageMenuTrackerStyleRoundedRect,               // 圆角矩形
     SPPageMenuTrackerStyleRect,                      // 矩形
-    SPPageMenuTrackerStyleTextZoom NS_ENUM_DEPRECATED_IOS(6_0, 6_0, "该枚举值已经被废弃，请用“selectedItemZoomScale”属性代替"), // 缩放(该枚举已经被废弃),用属性代替的目的是让其余样式可与缩放样式配套使用，另外，SPPageMenuTrackerStyle指的都是跟踪器样式，文字缩放和跟踪器实际上是毫无关系的，该枚举名字取的也不太合理，缩放的不单单是文字，而是整个item。如果你同时设置了该枚举和selectedItemZoomScale属性，selectedItemZoomScale优先级高于SPPageMenuTrackerStyleTextZoom
+    SPPageMenuTrackerStyleTextZoom NS_ENUM_DEPRECATED_IOS(6_0, 6_0, "该枚举值已经被废弃，请用“selectedItemZoomScale”属性代替"), // 缩放(该枚举已经被废弃,用属性代替的目的是让其余样式可与缩放样式配套使用。如果你同时设置了该枚举和selectedItemZoomScale属性，selectedItemZoomScale优先级高于SPPageMenuTrackerStyleTextZoom
     SPPageMenuTrackerStyleNothing                    // 什么样式都没有
 };
 
@@ -24,6 +24,12 @@ typedef NS_ENUM(NSInteger, SPPageMenuPermutationWay) {
     SPPageMenuPermutationWayScrollAdaptContent = 0,   // 自适应内容,可以左右滑动
     SPPageMenuPermutationWayNotScrollEqualWidths,     // 等宽排列,不可以滑动,整个内容被控制在pageMenu的范围之内,等宽是根据pageMenu的总宽度对每个item均分
     SPPageMenuPermutationWayNotScrollAdaptContent     // 自适应内容,不可以滑动,整个内容被控制在pageMenu的范围之内,这种排列方式下,自动计算item之间的间距,itemPadding属性无效
+};
+
+typedef NS_ENUM(NSInteger, SPPageMenuTrackerFollowingMode) {
+    SPPageMenuTrackerFollowingModeAlways = 0,   // 外界scrollView拖动时，跟踪器时刻跟随外界scrollView移动
+    SPPageMenuTrackerFollowingModeEnd,     // 外界scrollVie拖动w结束后，跟踪器才开始移动
+    SPPageMenuTrackerFollowingModeHalf     // 外界scrollView拖动距离超过屏幕一半时，跟踪器开始移动
 };
 
 typedef NS_ENUM(NSInteger, SPItemImagePosition) {
@@ -66,10 +72,14 @@ typedef NS_ENUM(NSInteger, SPItemImagePosition) {
 @property(nonatomic,readonly) NSUInteger numberOfItems; // items的总个数
 
 // item之间的间距，默认30；当排列方式permutationWay为‘SPPageMenuPermutationWayNotScrollAdaptContent’时此属性无效，无效是合理的，不可能做到“不可滑动且自适应内容”然后间距又自定义，这2者相互制约；
-@property (nonatomic, assign) CGFloat itemPadding;
-@property (nonnull, nonatomic, strong) UIFont *itemTitleFont; // item的标题字体
-@property (nonatomic, strong) UIColor *selectedItemTitleColor; // 选中的item标题颜色
-@property (nonatomic, strong) UIColor *unSelectedItemTitleColor; // 未选中的item标题颜色
+@property (nonatomic, assign)  CGFloat itemPadding;
+
+@property (nonatomic, strong)          UIColor *selectedItemTitleColor;   // 选中的item标题颜色
+@property (nonatomic, strong)          UIColor *unSelectedItemTitleColor; // 未选中的item标题颜色
+
+@property (nonatomic, strong)          UIFont  *itemTitleFont;  // 设置所有item标题字体，不区分选中的item和未选中的item
+@property (nonnull, nonatomic, strong) UIFont  *selectedItemTitleFont;    // 选中的item字体
+@property (nonnull, nonatomic, strong) UIFont  *unSelectedItemTitleFont;  // 未选中的item字体
 
 // 外界的srollView，pageMenu会监听该scrollView的滚动状况，让跟踪器时刻跟随此scrollView滑动；所谓的滚动状况，是指手指拖拽滚动，非手指拖拽不算
 @property (nonatomic, strong) UIScrollView *bridgeScrollView;
@@ -81,25 +91,24 @@ typedef NS_ENUM(NSInteger, SPItemImagePosition) {
 @property(nonatomic) BOOL bounces; // 边界反弹效果，默认YES
 @property(nonatomic) BOOL alwaysBounceHorizontal; // 水平方向上，当内容没有充满scrollView时，滑动scrollView是否有反弹效果，默认YES
 
+
 // 跟踪器
 @property (nonatomic, readonly) UIImageView *tracker; // 跟踪器,它是一个UIImageView类型，你可以拿到该对象去设置一些自己想要的属性,例如颜色,图片等，但是设置frame无效
 @property (nonatomic, assign)  CGFloat trackerWidth; // 跟踪器的宽度
-// 设置跟踪器的高度和圆角半径，矩形和圆角矩形样式下半径参数无效。其余样式下：默认的高度为3，圆角半径为高度的一半。之所以高度和半径以一个方法而不是2个属性的形式来设置，是因为不想提供太多的属性，其次跟踪器的高度一般用默认高度就好，自定义高度的情况并不会太多。如果你想用默认高度，但是又不想要圆角半径，你可以设置trackerHeight为3，cornerRadius为0，这是去除默认半径的唯一办法
+// 设置跟踪器的高度和圆角半径，矩形和圆角矩形样式下半径参数无效。其余样式下：默认的高度为3，圆角半径为高度的一半。如果你想用默认高度，但是又不想要圆角半径，你可以设置trackerHeight为3，cornerRadius为0，这是去除默认半径的唯一办法
 - (void)setTrackerHeight:(CGFloat)trackerHeight cornerRadius:(CGFloat)cornerRadius;
+
+// 跟踪器的跟踪模式
+@property (nonatomic, assign) SPPageMenuTrackerFollowingMode trackerFollowingMode;
 
 
 // 分割线
 @property (nonatomic, readonly) UIImageView *dividingLine; // 分割线,你可以拿到该对象设置一些自己想要的属性，如颜色、图片等，如果想要隐藏分割线，拿到该对象直接设置hidden为YES或设置alpha<0.01即可(eg：pageMenu.dividingLine.hidden = YES)
-@property (nonatomic) CGFloat dividingLineHeight; // 分割线的高度，默认高度为0.5
+@property (nonatomic) CGFloat dividingLineHeight; // 分割线的高度
 
 // 选中的item缩放系数，默认为1，为1代表不缩放，[0,1)之间缩小，(1,+∞)之间放大，(-1,0)之间"倒立"缩小，(-∞,-1)之间"倒立"放大，为-1"倒立不缩放",如果依然使用了废弃的SPPageMenuTrackerStyleTextZoom样式，则缩放系数默认为1.3
 @property (nonatomic) CGFloat selectedItemZoomScale;
 @property (nonatomic, assign) BOOL needTextColorGradients; // 是否需要文字渐变,默认为YES
-
-// 关闭跟踪器的跟随效果,在外界传了scrollView进来或者调用了moveTrackerFollowScrollView的情况下,如果为YES，则当外界滑动scrollView时，跟踪器不会时刻跟随,只有滑动结束才会跟随; 如果为NO，跟踪器会时刻跟随scrollView
-@property (nonatomic, assign) BOOL closeTrackerFollowingMode;
-
-@property (nonatomic, assign) BOOL showFuntionButton; // 是否显示功能按钮(功能按钮显示在最右侧),默认为NO
 
 @property (nonatomic, weak) id<SPPageMenuDelegate> delegate;
 
@@ -122,8 +131,12 @@ typedef NS_ENUM(NSInteger, SPItemImagePosition) {
 - (void)setEnabled:(BOOL)enaled forItemAtIndex:(NSUInteger)itemIndex; // 设置指定item的enabled状态
 - (BOOL)enabledForItemAtIndex:(NSUInteger)itemIndex; // 获取指定item的enabled状态
 
-- (void)setContentEdgeInsets:(UIEdgeInsets)contentEdgeInsets forForItemAtIndex:(NSUInteger)itemIndex; // 设置指定item的四周内边距
+- (void)setContentEdgeInsets:(UIEdgeInsets)contentEdgeInsets forItemAtIndex:(NSUInteger)itemIndex; // 设置指定item的四周内边距
 - (UIEdgeInsets)contentEdgeInsetsForItemAtIndex:(NSUInteger)itemIndex; // 获取指定item的四周内边距
+
+// 设置背景图片，barMetrics只有为UIBarMetricsDefault时才生效，如果外界传进来的backgroundImage调用过- resizableImageWithCapInsets:且参数capInsets不为UIEdgeInsetsZero，则直接用backgroundImage作为背景图; 否则内部会自动调用- resizableImageWithCapInsets:进行拉伸
+- (void)setBackgroundImage:(nullable UIImage *)backgroundImage barMetrics:(UIBarMetrics)barMetrics;
+- (nullable UIImage *)backgroundImageForBarMetrics:(UIBarMetrics)barMetrics; // 获取背景图片
 
 /**
  同时为指定item设置标题和图片
@@ -136,6 +149,10 @@ typedef NS_ENUM(NSInteger, SPItemImagePosition) {
  @param itemIndex            item的下标
  */
 - (void)setTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio imageTitleSpace:(CGFloat)imageTitleSpace forItemIndex:(NSUInteger)itemIndex;
+
+
+@property (nonatomic, assign) BOOL showFuntionButton; // 是否显示功能按钮(功能按钮显示在最右侧),默认为NO
+@property (nonatomic, assign) CGFloat funtionButtonshadowOpacity; // 功能按钮左侧的阴影透明度,如果设置小于等于0，则没有阴影
 
 /**
  *  同时为functionButton设置标题和图片
@@ -152,6 +169,7 @@ typedef NS_ENUM(NSInteger, SPItemImagePosition) {
 // 为functionButton配置相关属性，如设置字体、文字颜色等；在此,attributes中,只有NSFontAttributeName、NSForegroundColorAttributeName、NSBackgroundColorAttributeName有效
 - (void)setFunctionButtonTitleTextAttributes:(nullable NSDictionary *)attributes forState:(UIControlState)state;
 
+
 /* 1.让跟踪器时刻跟随外界scrollView滑动,实现了让跟踪器的宽度逐渐适应item宽度的功能;
    2.这个方法用于外界的scrollViewDidScroll代理方法中，如
  
@@ -165,6 +183,13 @@ typedef NS_ENUM(NSInteger, SPItemImagePosition) {
 - (void)moveTrackerFollowScrollView:(UIScrollView *)scrollView;
 
 
+
+// -------------- 以下方法和属性被废弃 --------------
+
+// 设置指定item的四周内边距,3.0版本的时候不小心多写了一个for,3.4.0版本已纠正
+- (void)setContentEdgeInsets:(UIEdgeInsets)contentEdgeInsets forForItemAtIndex:(NSUInteger)itemIndex NS_DEPRECATED_IOS(6_0, 6_0, "Use -setContentEdgeInsets:forItemAtIndex:");
+// 默认NO;关闭跟踪器的跟随效果,在外界传了scrollView进来或者调用了moveTrackerFollowScrollView的情况下,如果为YES，则当外界滑动scrollView时，跟踪器不会时刻跟随,只有滑动结束才会跟随;  3.4.0版本开始被废弃，但是依然能使用,使用后相当于设置了SPPageMenuTrackerFollowingModeEnd枚举值
+@property (nonatomic, assign) BOOL closeTrackerFollowingMode NS_DEPRECATED_IOS(6_0, 6_0,"Use trackerFollowingMode instead");
 // 以下2个方法从3.0版本开始有升级，可以使用但不推荐
 - (void)setTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio forItemIndex:(NSUInteger)itemIndex NS_DEPRECATED_IOS(6_0, 6_0, "Use -setTitle:image:imagePosition:imageRatio:imageTitleSpace:forItemIndex:");
 - (void)setFunctionButtonTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio forState:(UIControlState)state NS_DEPRECATED_IOS(6_0, 6_0, "Use -setFunctionButtonTitle:image:imagePosition:imageRatio:imageTitleSpace:forState:");

@@ -6,7 +6,7 @@
 //  Copyright © 2017年 iDress. All rights reserved.
 //
 
-// ----------- 悬浮菜单SPPageMenu的框架github地址:https://github.com/SPStore/SPPageMenu ---------
+// ----------- 分页菜单SPPageMenu的框架github地址:https://github.com/SPStore/SPPageMenu ---------
 // ----------- 本demo地址:https://github.com/SPStore/HVScrollView ----------
 
 #import "ViewController.h"
@@ -64,7 +64,7 @@
     // 添加头部视图
     [self.view addSubview:self.headerView];
     
-    // 添加悬浮菜单
+    // 添加分页菜单
     [self.view addSubview:self.pageMenu];
     
     // 添加4个子控制器
@@ -97,7 +97,7 @@
     
     if (scrollingScrollView == baseVc.scrollView && baseVc.isFirstViewLoaded == NO) {
         
-        // 让悬浮菜单跟随scrollView滑动
+        // 让分页菜单跟随scrollView滑动
         CGRect pageMenuFrame = self.pageMenu.frame;
         
         if (pageMenuFrame.origin.y >= kNaviH) {
@@ -105,7 +105,7 @@
             if (offsetDifference > 0 && scrollingScrollView.contentOffset.y+kScrollViewBeginTopInset > 0) {
                 
                 if (((scrollingScrollView.contentOffset.y+kScrollViewBeginTopInset+self.pageMenu.frame.origin.y)>=kHeaderViewH) || scrollingScrollView.contentOffset.y+kScrollViewBeginTopInset < 0) {
-                    // 悬浮菜单的y值等于当前正在滑动且显示在屏幕范围内的的scrollView的contentOffset.y的改变量(这是最难的点)
+                    // 分页菜单的y值等于当前正在滑动且显示在屏幕范围内的的scrollView的contentOffset.y的改变量(这是最难的点)
                     pageMenuFrame.origin.y += -offsetDifference;
                     if (pageMenuFrame.origin.y <= kNaviH) {
                         pageMenuFrame.origin.y = kNaviH;
@@ -126,7 +126,7 @@
         headerFrame.origin.y = self.pageMenu.frame.origin.y-kHeaderViewH;
         self.headerView.frame = headerFrame;
         
-        // 记录悬浮菜单的y值改变量
+        // 记录分页菜单的y值改变量
         distanceY = pageMenuFrame.origin.y - self.lastPageMenuY;
         self.lastPageMenuY = self.pageMenu.frame.origin.y;
         
