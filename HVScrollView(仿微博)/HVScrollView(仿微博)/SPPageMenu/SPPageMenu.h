@@ -33,14 +33,14 @@ typedef NS_ENUM(NSInteger, SPPageMenuTrackerFollowingMode) {
 };
 
 typedef NS_ENUM(NSInteger, SPItemImagePosition) {
-    SPItemImagePositionDefault,   // 默认图片在左边
-    SPItemImagePositionLeft,      // 图片在左边
-    SPItemImagePositionTop,       // 图片在上面
-    SPItemImagePositionRight,     // 图片在右边
-    SPItemImagePositionBottom     // 图片在下面
+    SPItemImagePositionDefault,   // 默认图片在左侧
+    SPItemImagePositionLeft,      // 图片在文字左侧
+    SPItemImagePositionRight,     // 图片在文字右侧
+    SPItemImagePositionTop,       // 图片在文字上侧
+    SPItemImagePositionBottom     // 图片在文字下侧
 };
 
-@class SPPageMenu;
+@class SPPageMenu,SPPageMenuButtonItem;
 
 @protocol SPPageMenuDelegate <NSObject>
 
@@ -62,7 +62,7 @@ typedef NS_ENUM(NSInteger, SPItemImagePosition) {
 /**
  *  传递数据
  *
- *  @param items    数组 (数组元素只能是NSString或UIImage类型)
+ *  @param items    数组 (数组元素可以是NSString、UIImage类型、SPPageMenuButtonItem类型，其中SPPageMenuButtonItem相当于一个模型，可以同时设置图片和文字)
  *  @param selectedItemIndex  默认选中item的下标
  */
 - (void)setItems:(nullable NSArray *)items selectedItemIndex:(NSInteger)selectedItemIndex;
@@ -70,6 +70,12 @@ typedef NS_ENUM(NSInteger, SPItemImagePosition) {
 @property (nonatomic) NSInteger selectedItemIndex; // 选中的item下标，改变其值可以用于切换选中的item
 
 @property(nonatomic,readonly) NSUInteger numberOfItems; // items的总个数
+
+#if TARGET_INTERFACE_BUILDER
+@property (nonatomic, readonly) IBInspectable NSInteger trackerStyle; // 该枚举属性支持storyBoard/xib,方便在storyBoard/xib中创建时直接设置
+#else
+@property (nonatomic, readonly) SPPageMenuTrackerStyle trackerStyle;
+#endif
 
 // item之间的间距，默认30；当排列方式permutationWay为‘SPPageMenuPermutationWayNotScrollAdaptContent’时此属性无效，无效是合理的，不可能做到“不可滑动且自适应内容”然后间距又自定义，这2者相互制约；
 @property (nonatomic, assign)  CGFloat itemPadding;
@@ -110,11 +116,15 @@ typedef NS_ENUM(NSInteger, SPItemImagePosition) {
 @property (nonatomic) CGFloat selectedItemZoomScale;
 @property (nonatomic, assign) BOOL needTextColorGradients; // 是否需要文字渐变,默认为YES
 
+@property (nonatomic, assign) BOOL showFuntionButton; // 是否显示功能按钮(功能按钮显示在最右侧),默认为NO
+@property (nonatomic, assign) CGFloat funtionButtonshadowOpacity; // 功能按钮左侧的阴影透明度,如果设置小于等于0，则没有阴影
+
 @property (nonatomic, weak) id<SPPageMenuDelegate> delegate;
 
 // 插入item,插入和删除操作时,如果itemIndex超过了了items的个数,则不做任何操作
 - (void)insertItemWithTitle:(nullable NSString *)title atIndex:(NSUInteger)itemIndex animated:(BOOL)animated;
-- (void)insertItemWithImage:(nullable UIImage *)image  atIndex:(NSUInteger)itemIndex animated:(BOOL)animated;
+- (void)insertItemWithImage:(nullable UIImage *)image atIndex:(NSUInteger)itemIndex animated:(BOOL)animated;
+- (void)insertItem:(nullable SPPageMenuButtonItem *)item atIndex:(NSUInteger)itemIndex animated:(BOOL)animated;
 // 如果移除的正是当前选中的item(当前选中的item下标不为0),删除之后,选中的item会切换为上一个item
 - (void)removeItemAtIndex:(NSUInteger)itemIndex animated:(BOOL)animated;
 - (void)removeAllItems;
@@ -124,6 +134,11 @@ typedef NS_ENUM(NSInteger, SPItemImagePosition) {
 
 - (void)setImage:(nullable UIImage *)image forItemAtIndex:(NSUInteger)itemIndex; // 设置指定item的图片,设置后，仅会有图片
 - (nullable UIImage *)imageForItemAtIndex:(NSUInteger)itemIndex; // 获取指定item的图片
+
+- (void)setItem:(SPPageMenuButtonItem *)item forItemIndex:(NSUInteger)itemIndex; // 同时为指定item设置标题和图片,其中参数item相当于一个模型，可以同时设置文字和图片
+- (nullable SPPageMenuButtonItem *)itemAtIndex:(NSUInteger)itemIndex; // 获取指定item
+
+- (id)objectForItemAtIndex:(NSUInteger)itemIndex; // 获取指定item，该方法获取的item可能是NSString、UIImage或SPPageMenuButtonItem类型
 
 - (void)setWidth:(CGFloat)width forItemAtIndex:(NSUInteger)itemIndex; // 设置指定item的宽度(如果width为0,item会根据内容自动计算width)
 - (CGFloat)widthForItemAtIndex:(NSUInteger)itemIndex; // 获取指定item的宽度
@@ -138,33 +153,8 @@ typedef NS_ENUM(NSInteger, SPItemImagePosition) {
 - (void)setBackgroundImage:(nullable UIImage *)backgroundImage barMetrics:(UIBarMetrics)barMetrics;
 - (nullable UIImage *)backgroundImageForBarMetrics:(UIBarMetrics)barMetrics; // 获取背景图片
 
-/**
- 同时为指定item设置标题和图片
-
- @param title    标题
- @param image    图片
- @param imagePosition        图片的位置，分上、左、下、右
- @param ratio                图片所占item的比例,图片在左右时默认0.5，图片在上下时默认2.0/3.0
- @param imageTitleSpace      图片与标题之间的间距,默认0
- @param itemIndex            item的下标
- */
-- (void)setTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio imageTitleSpace:(CGFloat)imageTitleSpace forItemIndex:(NSUInteger)itemIndex;
-
-
-@property (nonatomic, assign) BOOL showFuntionButton; // 是否显示功能按钮(功能按钮显示在最右侧),默认为NO
-@property (nonatomic, assign) CGFloat funtionButtonshadowOpacity; // 功能按钮左侧的阴影透明度,如果设置小于等于0，则没有阴影
-
-/**
- *  同时为functionButton设置标题和图片
- *
- *  @param title    标题
- *  @param image    图片
- *  @param imagePosition    图片的位置，分上、左、下、右
- *  @param ratio            图片所占item的比例,图片在左右时默认0.5，图片在上下时默认2.0/3.0
- *  @param imageTitleSpace  图片与标题之间的间距,默认0
- *  @param state            控件状态
- */
-- (void)setFunctionButtonTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio imageTitleSpace:(CGFloat)imageTitleSpace forState:(UIControlState)state;
+// 同时为functionButton设置标题和图片
+- (void)setFunctionButtonWithItem:(SPPageMenuButtonItem *)item forState:(UIControlState)state;
 
 // 为functionButton配置相关属性，如设置字体、文字颜色等；在此,attributes中,只有NSFontAttributeName、NSForegroundColorAttributeName、NSBackgroundColorAttributeName有效
 - (void)setFunctionButtonTitleTextAttributes:(nullable NSDictionary *)attributes forState:(UIControlState)state;
@@ -178,21 +168,40 @@ typedef NS_ENUM(NSInteger, SPItemImagePosition) {
     }
  
     3.如果外界设置了SPPageMenu的属性"bridgeScrollView"，那么外界就可以不用在scrollViewDidScroll方法中调用这个方法来实现跟踪器时刻跟随外界scrollView的效果,内部会自动处理; 外界对SPPageMenu的属性"bridgeScrollView"赋值是实现此效果的最简便的操作
-    4.如果不想要此效果,可设置closeTrackerFollowingMode==YES
  */
 - (void)moveTrackerFollowScrollView:(UIScrollView *)scrollView;
 
 
 
-// -------------- 以下方法和属性被废弃 --------------
+// -------------- 以下方法和属性被废弃，不再建议使用 --------------
 
 // 设置指定item的四周内边距,3.0版本的时候不小心多写了一个for,3.4.0版本已纠正
 - (void)setContentEdgeInsets:(UIEdgeInsets)contentEdgeInsets forForItemAtIndex:(NSUInteger)itemIndex NS_DEPRECATED_IOS(6_0, 6_0, "Use -setContentEdgeInsets:forItemAtIndex:");
 // 默认NO;关闭跟踪器的跟随效果,在外界传了scrollView进来或者调用了moveTrackerFollowScrollView的情况下,如果为YES，则当外界滑动scrollView时，跟踪器不会时刻跟随,只有滑动结束才会跟随;  3.4.0版本开始被废弃，但是依然能使用,使用后相当于设置了SPPageMenuTrackerFollowingModeEnd枚举值
 @property (nonatomic, assign) BOOL closeTrackerFollowingMode NS_DEPRECATED_IOS(6_0, 6_0,"Use trackerFollowingMode instead");
-// 以下2个方法从3.0版本开始有升级，可以使用但不推荐
-- (void)setTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio forItemIndex:(NSUInteger)itemIndex NS_DEPRECATED_IOS(6_0, 6_0, "Use -setTitle:image:imagePosition:imageRatio:imageTitleSpace:forItemIndex:");
-- (void)setFunctionButtonTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio forState:(UIControlState)state NS_DEPRECATED_IOS(6_0, 6_0, "Use -setFunctionButtonTitle:image:imagePosition:imageRatio:imageTitleSpace:forState:");
+// 下面的方法均有升级，其中ratio参数已失效
+- (void)setTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio forItemIndex:(NSUInteger)itemIndex NS_DEPRECATED_IOS(6_0, 6_0, "Use -setItem: forItemIndex:");
+- (void)setTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio imageTitleSpace:(CGFloat)imageTitleSpace forItemIndex:(NSUInteger)itemIndex NS_DEPRECATED_IOS(6_0, 6_0, "Use -setItem: forItemIndex:");
+- (void)setFunctionButtonTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio forState:(UIControlState)state NS_DEPRECATED_IOS(6_0, 6_0, "Use - setFunctionButtonWithItem:forState:");
+- (void)setFunctionButtonTitle:(nullable NSString *)title image:(nullable UIImage *)image imagePosition:(SPItemImagePosition)imagePosition imageRatio:(CGFloat)ratio imageTitleSpace:(CGFloat)imageTitleSpace forState:(UIControlState)state NS_DEPRECATED_IOS(6_0, 6_0, "Use - setFunctionButtonWithItem:forState:");
+@end
+
+
+// 这个类相当于模型,主要用于同时为某个按钮设置图片和文字时使用
+@interface SPPageMenuButtonItem : NSObject
+
+// 快速创建同时含有标题和图片的item，默认图片在左边，文字在右边
++ (instancetype)itemWithTitle:(NSString *)title image:(UIImage *)image;
+// 快速创建同时含有标题和图片的item，imagePositiona参数为图片位置
++ (instancetype)itemWithTitle:(NSString *)title image:(UIImage *)image imagePosition:(SPItemImagePosition)imagePosition;
+
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, strong) UIImage *image;
+// 图片的位置
+@property (nonatomic, assign) SPItemImagePosition imagePosition;
+// 图片与标题之间的间距,默认0.0
+@property (nonatomic, assign) CGFloat imageTitleSpace;
+
 @end
 
 NS_ASSUME_NONNULL_END
